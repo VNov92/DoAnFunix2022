@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{components/header::admin_header(~{::title}, ~{})}">
+  <title>Products</title>
+</head>
+<body>
+<th:block th:replace="~{components/menu::admin_menu}"/>
+<div class="container" th:with="baseUrl=${'/admin/products'}">
+  <h2>Products
+    <th:block th:replace="~{components/searchBox::common_search('Product')}"/>
+    <div class="d-flex justify-content-end">
+
+      <span th:if="${keyword!=null && !keyword.isBlank()}" class="flex-fill fs-3">Found [[${totalElements}]] results for: '[[${keyword}]]'</span>
+      <div class="d-flex">
+        <form class=" me-3">
+          <input type="hidden" name="sortField" th:value="${sortField}">
+          <input type="hidden" name="sortDir" th:value="${sortDir}">
+          <input type="hidden" name="pageSize" th:value="${pageSize}">
+          <input type="hidden" name="keyword" th:value="${keyword}">
+          <select name="cate" class="form-select" aria-label="Default select"
+                  onchange="this.form.submit()">
+            <option value="" selected>Select a category</option>
+            <option th:each="category: ${categories}" th:value="${category.id}"
+                    th:selected="${category.id == cate}" th:text="${category.title}"></option>
+          </select>
+        </form>
+        <a class="btn btn-primary text-nowrap" href="/admin/products/new">
+          <i data-feather="plus"></i>
+          Add a product
+        </a>
+      </div>
+    </div>
+  </h2>
+  <form method="post" th:action="@{/admin/products}" id="main-form">
+    <div class="table-responsive">
+      <table class="table">
+        <thead
+            th:with="postFix='&pageSize='+${pageSize} +${status!=null?'&status='+status:''}+${cate!=null?'&cate='+cate:''}+${role!=null?'&role='+role:''}+${keyword!=null?'&keyword='+keyword:''}">
+        <tr>
+          <th><input type="checkbox" id="select_all" class="form-check-input">
+            <span id="select_count"></span>
+          </th>
+          <th>
+            <a class="d-flex text-decoration-none" role="button"
+               th:href="@{${baseUrl}+'?sortField=id'+${sortField.equals('id')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
+              <span>ID</span>
+              <i data-feather="align-center"></i></a>
+          </th>
+          <th>Product Title</th>
+          <th>Image</th>
+          <th><a class="d-flex text-decoration-none" role="button"
+                 th:href="@{${baseUrl}+'?sortField=category'+${sortField.equals('category')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
+            <span>Category</span>
+            <i data-feather="align-center"></i></a></th>
+          <th>Short detail</th>
+          <th>Full detail</th>
+          <th><a class="d-flex text-decoration-none" role="button"
+                 th:href="@{${baseUrl}+'?sortField=cost'+${sortField.equals('cost')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
+            <span>Cost</span>
+            <i data-feather="align-center"></i></a></th>
+          <th><span>Download times</span></th>
+          <th>Created Date</th>
+          <th><a class="d-flex text-decoration-none" role="button"
+                 th:href="@{${baseUrl}+'?sortField=lastModifiedDate'+${sortField.equals('lastModifiedDate')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
+            <span>LMD</span>
+            <i data-feather="align-center"></i></a></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product: ${content}">
+          <td>
+            <input class="form-check-input emp_checkbox" type="checkbox" name="cid"
+                   th:value="${product.id}"/>
+
+          </td>
+          <td th:text="${product.id}">1</td>
+          <td class="" data-bs-toggle="tooltip" data-bs-placement="top"
+              th:attr="data-bs-title=${product.title}">
+            <span class="truncate" th:text="${product.title}"></span></td>
+          <td><img th:src="@{${'/productImages/' + product.url}}" class="img-thumbnail"
+                   alt="Product image"/>
+          </td>
+          <td class="" data-bs-toggle="tooltip" data-bs-placement="top"
+              th:attr="data-bs-title=${product.category.title}"><span class="truncate"
+                                                                      th:text="${product.category.title}"></span>
+          </td>
+          <td class="" data-bs-toggle="tooltip" data-bs-placement="top"
+              th:attr="data-bs-title=${product.shortDetail}"><span class="truncate"
+                                                                   th:text="${product.shortDetail}"></span>
+          </td>
+          <td class="" data-bs-toggle="tooltip" data-bs-placement="top"
+              th:attr="data-bs-title=${product.fullDetail}"><span class="truncate max__width"
+                                                                  th:text="${product.fullDetail}"></span>
+          </td>
+          <td class="" th:text="${product.cost}"></td>
+          <td></td>
+          <td class="" th:text="${product.createdDate}"></td>
+          <td class="" th:text="${product.lastModifiedDate}"></td>
+          <td class="text-end">
+            <div class="btn-group-vertical">
+              <a class="btn btn-info btn-sm" th:href="@{/product/{id}(id=${product.id})}">
+                <i data-feather="eye"></i>
+                <span class="d-none d-md-inline">Xem</span>
+              </a>
+              <a class="btn btn-warning btn-sm"
+                 th:href="@{/admin/products/edit/{id}(id=${product.id})}">
+                <i data-feather="edit-3"></i>
+                <span class="d-none d-md-inline">Sửa</span>
+              </a>
+              <a class="btn btn-primary btn-sm"
+                 th:href="@{/admin/products/copy/{id}(id=${product.id})}">
+                <i data-feather="copy"></i>
+                <span class="d-none d-md-inline">Copy</span>
+              </a>
+              <a class="btn btn-danger btn-sm"
+                 th:href="@{/admin/products/delete/{id}(id=${product.id})}"
+                 th:data-v-delete="${product.title}">
+                <i data-feather="trash"></i>
+                <span class="d-none d-md-inline">Xóa</span></a>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </form>
+  <th:block th:replace="~{components/pagination::common_pagination(${baseUrl})}"/>
+  <div th:if="${totalPages>0}" class="d-flex mt-3 align-items-center">
+    <span class="me-2">Page size:</span>
+    <form>
+      <input type="hidden" name="sortField" th:value="${sortField}">
+      <input type="hidden" name="sortDir" th:value="${sortDir}">
+      <input type="hidden" name="cate" th:value="${cate}">
+      <select name="pageSize" class="form-select" aria-label="Default select"
+              onchange="this.form.submit()">
+        <option th:each="i: ${#numbers.sequence(3,9,3)}" th:value="${i}"
+                th:selected="${i == pageSize}"
+                th:text="${i}"></option>
+      </select>
+    </form>
+  </div>
+  <div th:if="${totalProducts==0}" class="text-center text-bg-danger p-3">Oops, nothing to see
+    here!
+  </div>
+  <th:block th:replace="~{components/notice::common_notice}"/>
+</div>
+
+<th:block th:replace="~{components/footer::admin_footer(~{::script})}">
+  <script>
+    /*-------------------
+    To sleect/deselect all
+    ---------------------- */
+    $("#select_all").click(function () {
+      const status = !!$(this).is(":checked");
+      $('.emp_checkbox').prop('checked', status);
+      showButtonDelete();
+    })
+    /*-------------------
+    To sleect/deselect one
+    ---------------------- */
+    $('.emp_checkbox').click(function () {
+      const status = !!$(this).is(":checked");
+      $(this).prop('checked', status);
+      showButtonDelete();
+    });
+    showButtonDelete = function () {
+      const btnDelete = $('.btn-delete');
+      const empCheckbox = $('input.emp_checkbox:checked');
+      if (empCheckbox.length > 0) {
+        if (!btnDelete.length) {
+          const btnDelete1 = '<button type="submit" class="btn-delete btn btn-primary sticky-bottom start-50 translate-middle">Delete <span id="count-check"></span></button>';
+          $('#main-form').append(btnDelete1);
+        }
+        $('input[type=checkbox]').on('click', btnDelete,
+            $('#count-check').html(empCheckbox.length + ' Products'), '');
+      } else {
+        btnDelete.remove();
+      }
+    }
+  </script>
+</th:block>
+</body>
+</html>

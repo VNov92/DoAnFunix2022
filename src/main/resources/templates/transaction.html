@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+</head>
+<body>
+<th:block th:fragment="purchases" th:if="${content!= null && title.equals('Options')}">
+    <div class="table-responsive" th:with="baseUrl=${'/user/purchases'}">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th><a class="d-flex text-decoration-none" role="button"
+                       th:href="@{${baseUrl}(sortField='cost',sortDir=${sortField!=null&&sortField.equals('cost')?reverseSortDir:sortDir},pageSize=${pageSize})}">
+                    <span>Cost</span>
+                    <i data-feather="align-center"></i></a></th>
+                <th><a class="d-flex text-decoration-none" role="button"
+                       th:href="@{${baseUrl}(sortField='createdDate',sortDir=${sortField!=null&&sortField.equals('createdDate')?reverseSortDir:sortDir},pageSize=${pageSize})}"><span>CD</span><i
+                        data-feather="align-center"></i></a></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, index: ${content}">
+                <td th:text="${currentPage*3-2+index.index}">1</td>
+                <td><a th:href="@{'/product/'+${item.product.id}}" th:text="${item.product.title}" target="_blank">Product
+                    link</a></td>
+                <td class="" th:text="${item.cost}"></td>
+                <td class="" th:text="${#dates.format(item.createdDate,'dd-MM-yyyy HH:mm:ss')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <th:block th:replace="~{components/pagination::common_pagination('/user/purchases')}"/>
+</th:block>
+<th:block th:fragment="recharges" th:if="${content!=null && title.equals('Recharges')}">
+    <div class="table-responsive" th:with="baseUrl=${'/user/recharges'}">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th><a class="d-flex text-decoration-none" role="button"
+                       th:href="@{${baseUrl}(sortField='money',sortDir=${sortField!=null&&sortField.equals('money')?reverseSortDir:sortDir},pageSize=${pageSize})}"><span>Money</span><i
+                        data-feather="align-center"></i></a></th>
+                <th>Status</th>
+                <th><a class="d-flex text-decoration-none" role="button"
+                       th:href="@{${baseUrl}(sortField='createdDate',sortDir=${sortField!=null&&sortField.equals('createdDate')?reverseSortDir:sortDir},pageSize=${pageSize})}"><span>CD</span><i
+                        data-feather="align-center"></i></a></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, index: ${content}">
+                <td th:text="${currentPage*3-2+index.index}">1</td>
+                <td><span>[[${#numbers.formatInteger(item.money,3,'POINT')}]] VND</span></td>
+                <td th:text="${item.status}">Status</td>
+                <td class="" th:text="${#dates.format(item.createdDate,'dd-MM-yyyy HH:mm:ss')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <th:block th:replace="~{components/pagination::common_pagination('/user/recharges')}"/>
+</th:block>
+</body>
+</html>

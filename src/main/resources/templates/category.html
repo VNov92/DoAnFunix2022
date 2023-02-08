@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{components/header :: common_header(${title}, ~{})}">
+  <title>Category page</title>
+</head>
+<body data-bs-theme="light">
+<th:block th:replace="~{components/menu::common_menu}"/>
+<main>
+  <div class="container">
+    <div th:unless="${content}" class="text-center text-bg-danger p-3">Oops, nothing to see here!
+    </div>
+    <section th:if="${content}">
+      <ul class="list-group list-group-flush mx-auto">
+        <li class="list-group-item" th:each="product: ${content}">
+          <h2 class="fs-5 fw-normal text-primary" th:text="${product.title}">Product title</h2>
+          <div class="row">
+            <div class="col-md-3">
+              <img th:src="@{'/productImages/'+${product.url}}"
+                   class="img-fluid img--thumbnail rounded"
+                   th:alt="${product.title}">
+            </div>
+            <div class="col-md-9">
+              <div>
+                <p class="mb-1" th:text="${product.shortDetail}">Short detail for product</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="d-flex align-items-center">
+                    <i data-feather="calendar" width="16" height="16" class="me-1"></i>
+                    <span th:text="${#dates.format(product.createdDate, 'dd-MM-yyyy')}"
+                          class="text-danger">01-01-2023
+                                        </span>
+                  </small>
+
+                  <a th:href="@{'/product/'+${product.id}}"
+                     class="btn btn-outline-danger stretched-link py-0">Download</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <th:block th:replace="~{components/pagination::common_pagination('/category')}"/>
+        </li>
+      </ul>
+    </section>
+  </div>
+</main>
+<th:block th:replace="~{components/footer::common_footer}"/>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{components/header::admin_header(~{::title}, ~{})}">
+  <title>Categories</title>
+</head>
+<body>
+<th:block th:replace="~{components/menu::admin_menu}"/>
+<div class="container">
+  <h2>Categories
+    <div class="d-flex justify-content-end">
+      <a class="btn btn-primary" href="/admin/categories/new">
+        <i data-feather="plus"></i>
+        Add a category
+      </a>
+    </div>
+  </h2>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Category Title</th>
+        <th>Category Description</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="category: ${categories}">
+        <td th:text="${category.id}">1</td>
+        <td class="text-truncate" th:text="${category.title}"></td>
+        <td class="text-truncate" th:text="${category.description}" data-bs-toggle="tooltip"
+            data-bs-placement="top" th:attr="data-bs-title=${category.description}"></td>
+        <td class="text-end">
+          <div class="btn-group">
+            <a class="btn btn-info btn-sm" th:href="@{/category(cate=${category.id})}"
+               target="_blank">
+              <i data-feather="eye"></i>
+              <span class="d-none d-md-inline">Xem</span>
+            </a>
+            <a class="btn btn-warning btn-sm"
+               th:href="@{/admin/categories/edit/{id}(id=${category.id})}">
+              <i data-feather="edit-3"></i>
+              <span class="d-none d-md-inline">Sửa</span>
+            </a>
+            <a class="btn btn-danger btn-sm"
+               th:href="@{/admin/categories/delete/{id}(id=${category.id})}"
+               th:data-v-delete="${category.title}">
+              <i data-feather="trash"></i>
+              <span class="d-none d-md-inline">Xóa</span></a>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <th:block th:replace="~{components/notice::common_notice}"/>
+</div>
+
+<th:block th:replace="~{components/footer::admin_footer(~{})}"/>
+</body>
+</html>

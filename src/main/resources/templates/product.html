@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{components/header :: common_header(${product.title}, ~{})}">
+  <title>Product page</title>
+</head>
+<body data-bs-theme="light">
+<th:block th:replace="~{components/menu::common_menu}"/>
+<main>
+  <div class="container">
+    <article class="product d-flex flex-column mx-auto" th:object="${product}">
+      <header>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item" aria-current="page"><a
+                th:href="@{'/category?cate='+${product.category.id}}"
+                th:text="${product.category.title}">Category</a>
+            </li>
+          </ol>
+        </nav>
+        <h1 th:text="*{title}" class="fs-4 fw-normal text-primary">Product title</h1>
+        <p class="d-flex align-items-center fs-7">
+          <span>Date:</span>
+          <span th:text="${#dates.format(product.createdDate, 'dd-MM-yyyy')}"
+                class="text-danger ms-1">01-01-2023
+                                        </span>
+        </p>
+        <p th:text="${product.shortDetail}">Short detail</p>
+      </header>
+      <img th:src="@{'/productImages/'+${product.url}}" th:alt="${product.title}"
+           class="img-fluid rounded"/>
+      <div class="d-flex justify-content-end align-items-center my-3">
+        <p class="mb-0 me-2 text-danger">Please download to see the full document</p>
+        <a sec:authorize="anonymous" th:href="@{/login}"
+           class="btn btn-outline-danger py-0 btn--download"
+           data-v-required="login">
+          <i data-feather="download"></i>
+          Download
+        </a>
+        <a sec:authorize="isAuthenticated()" th:href="@{'/user/download/'+*{id}}"
+           class="btn btn-outline-danger py-0 d-flex align-items-center  btn--download"
+           data-v-required="download">
+          <i data-feather="download"></i>
+          <span th:text="*{cost}" class="ms-2">Points</span>
+          <i data-feather="battery" width="16" height="16"></i>
+        </a>
+      </div>
+      <p th:utext="${product.fullDetail}">Full detail</p>
+    </article>
+  </div>
+</main>
+<th:block th:replace="~{components/notice::common_notice}"/>
+<th:block th:replace="~{components/footer::common_footer}"/>
+</body>
+</html>
