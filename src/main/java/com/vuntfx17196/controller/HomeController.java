@@ -4,6 +4,7 @@ import com.vuntfx17196.global.BadRequestAlertException;
 import com.vuntfx17196.model.Category;
 import com.vuntfx17196.model.Product;
 import com.vuntfx17196.model.User;
+import com.vuntfx17196.repository.ProductsViewRepository;
 import com.vuntfx17196.security.SecurityUtils;
 import com.vuntfx17196.service.CategoryService;
 import com.vuntfx17196.service.ProductService;
@@ -24,13 +25,15 @@ public class HomeController {
   private final CategoryService categoryService;
   private final ProductService productService;
   private final UserService userService;
+  private final ProductsViewRepository productsViewRepository;
   private static final String PAGE_SIZE_DEFAULT = "3";
 
   public HomeController(CategoryService categoryService, UserService userService,
-      ProductService productService) {
+      ProductService productService, ProductsViewRepository productsViewRepository) {
     this.categoryService = categoryService;
     this.productService = productService;
     this.userService = userService;
+    this.productsViewRepository = productsViewRepository;
   }
 
   @ModelAttribute("categories")
@@ -107,6 +110,10 @@ public class HomeController {
     }
 
     model.addAttribute("product", product.get());
+    // Aside
+    model.addAttribute("contentLeft", productService.getTop5ProductsOrderByLMD());
+    model.addAttribute("contentRight", productsViewRepository.findAll());
+
     return "product";
   }
 }

@@ -33,7 +33,7 @@ public class SecurityConfiguration {
 
   private final String[] publicPages = {"/", "/index", "/category/**", "/product/**", "/search/**",
       "/register",
-      "/forgotpassword", "/account/**", "/error"};
+      "/forgotpassword", "/account/**", "/error", "/api/**"};
   private final String[] publicResources = {"/resources/**", "/static/**", "/images/**",
       "/productImages/**",
       "/css/**", "/js/**"};

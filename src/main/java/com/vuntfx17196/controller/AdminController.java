@@ -14,6 +14,7 @@ import com.vuntfx17196.model.Purchase;
 import com.vuntfx17196.model.Recharge;
 import com.vuntfx17196.model.Role;
 import com.vuntfx17196.model.User;
+import com.vuntfx17196.repository.ProductsViewRepository;
 import com.vuntfx17196.repository.RoleRepository;
 import com.vuntfx17196.service.CategoryService;
 import com.vuntfx17196.service.MailService;
@@ -66,7 +67,8 @@ public class AdminController {
 
   public AdminController(CategoryService categoryService, ProductService productService,
       UserService userService, RoleRepository roleRepository, RechargeService rechargeService,
-      PurchaseService purchaseService, HttpSession session, MailService mailService) {
+      PurchaseService purchaseService, HttpSession session, MailService mailService,
+      ProductsViewRepository productsViewRepository) {
     this.categoryService = categoryService;
     this.productService = productService;
     this.userService = userService;

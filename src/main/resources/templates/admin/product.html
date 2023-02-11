@@ -58,7 +58,6 @@
                  th:href="@{${baseUrl}+'?sortField=cost'+${sortField.equals('cost')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
             <span>Cost</span>
             <i data-feather="align-center"></i></a></th>
-          <th><span>Download times</span></th>
           <th>Created Date</th>
           <th><a class="d-flex text-decoration-none" role="button"
                  th:href="@{${baseUrl}+'?sortField=lastModifiedDate'+${sortField.equals('lastModifiedDate')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
@@ -94,7 +93,6 @@
                                                                   th:text="${product.fullDetail}"></span>
           </td>
           <td class="" th:text="${product.cost}"></td>
-          <td></td>
           <td class="" th:text="${product.createdDate}"></td>
           <td class="" th:text="${product.lastModifiedDate}"></td>
           <td class="text-end">
