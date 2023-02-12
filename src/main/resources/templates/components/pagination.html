@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Pagination</title>
+  <meta charset="UTF-8">
+  <title>Pagination</title>
 </head>
 <body>
-<th:block th:fragment="common_pagination(baseUrl)">
-    <nav aria-label="Page navigation"
-         th:with="postFix='&sortField='+${sortField}+'&sortDir='+${sortDir}+'&pageSize='+${pageSize} +${status!=null?'&status='+status:''}+${cate!=null?'&cate='+cate:''}+${role!=null?'&role='+role:''}+${keyword!=null?'&keyword='+keyword:''}">
-        <ul class="pagination">
-            <li class="page-item">
-                <a class="page-link" th:if="${currentPage > 1}"
-                   th:href="@{${baseUrl}+${'?page='+(currentPage-1)}+${postFix}}" aria-label="Previous">
-                    <i data-feather="chevrons-left" width="18" height="18"></i>
-                </a>
-                <span class="page-link disabled" th:unless="${currentPage > 1}"><i data-feather="chevrons-left"
-                                                                                   width="18" height="18"></i></span>
-            </li>
-            <li class="page-item" th:each="i:${#numbers.sequence(1, totalPages)}">
-                <a th:if="${i != currentPage}" class="page-link" th:href="@{${baseUrl}+${'?page='+i}+${postFix}}"
-                   th:text="${i}">1</a>
-                <span class="page-link active" th:unless="${i != currentPage}" th:text="${i}">1</span>
-            </li>
-            <li class="page-item">
-                <a class="page-link" th:if="${currentPage < totalPages}"
-                   th:href="@{${baseUrl}+${'?page='+(currentPage+1)}+${postFix}}" aria-label="Next">
-                    <i data-feather="chevrons-right" width="18" height="18"></i>
-                </a>
-                <span class="page-link disabled" th:unless="${currentPage < totalPages}"><i
-                        data-feather="chevrons-right" width="18" height="18"></i></span>
-            </li>
-        </ul>
-    </nav>
+<th:block th:fragment="common_pagination(baseUrl)" th:if="${totalPages>1}">
+  <nav aria-label="Page navigation"
+       th:with="postFix='&sortField='+${sortField}+'&sortDir='+${sortDir}+'&pageSize='+${pageSize} +${status!=null?'&status='+status:''}+${cate!=null?'&cate='+cate:''}+${role!=null?'&role='+role:''}+${keyword!=null?'&keyword='+keyword:''}">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link" th:if="${currentPage > 1}"
+           th:href="@{${baseUrl}+${'?page='+(currentPage-1)}+${postFix}}" aria-label="Previous">
+          <i data-feather="chevrons-left" width="18" height="18"></i>
+        </a>
+        <span class="page-link disabled" th:unless="${currentPage > 1}"><i
+            data-feather="chevrons-left"
+            width="18" height="18"></i></span>
+      </li>
+      <li class="page-item" th:each="i:${#numbers.sequence(1, totalPages)}">
+        <a th:if="${i != currentPage}" class="page-link"
+           th:href="@{${baseUrl}+${'?page='+i}+${postFix}}"
+           th:text="${i}">1</a>
+        <span class="page-link active" th:unless="${i != currentPage}" th:text="${i}">1</span>
+      </li>
+      <li class="page-item">
+        <a class="page-link" th:if="${currentPage < totalPages}"
+           th:href="@{${baseUrl}+${'?page='+(currentPage+1)}+${postFix}}" aria-label="Next">
+          <i data-feather="chevrons-right" width="18" height="18"></i>
+        </a>
+        <span class="page-link disabled" th:unless="${currentPage < totalPages}"><i
+            data-feather="chevrons-right" width="18" height="18"></i></span>
+      </li>
+    </ul>
+  </nav>
 </th:block>
 </body>
 </html>

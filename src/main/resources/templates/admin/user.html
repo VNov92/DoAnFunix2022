@@ -1,148 +1,160 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{components/header::admin_header(~{::title}, ~{})}">
-    <title>Users</title>
+  <title>Users</title>
 </head>
 <body>
 <th:block th:replace="~{components/menu::admin_menu}"/>
 <div class="container" th:with="baseUrl=${'/admin/users'}">
-    <h2>Users
-        <th:block th:replace="~{components/searchBox::common_search('User')}"/>
-        <div class="d-flex justify-content-end">
+  <h2>Users
+    <div class="mt-2">
+      <th:block th:replace="~{components/searchBox::common_search('User')}"/>
+    </div>
+    <div class="d-flex justify-content-end">
 
-            <span th:if="${keyword!=null && !keyword.isBlank()}" class="flex-fill fs-3">Found [[${totalUsers}]] results for: '[[${keyword}]]'</span>
-            <div class="d-flex">
-                <form class=" me-3">
-                    <input type="hidden" name="sortField" th:value="${sortField}">
-                    <input type="hidden" name="sortDir" th:value="${sortDir}">
-                    <input type="hidden" name="page" th:value="${currentPage}">
-                    <input type="hidden" name="pageSize" th:value="${pageSize}">
-                    <input type="hidden" name="keyword" th:value="${keyword}">
-                    <select name="role" class="form-select" aria-label="Default select" onchange="this.form.submit()">
-                        <option value="" selected>Filter by role</option>
-                        <option th:each="rolee: ${roles}" th:value="${rolee.id}" th:selected="${rolee.id == role}"
-                                th:text="${rolee.name}"></option>
-                    </select>
-                </form>
-                <a class="btn btn-primary text-nowrap" href="/admin/users/new">
-                    <i data-feather="plus"></i>
-                    Add new user
-                </a>
-            </div>
-        </div>
-    </h2>
-    <th:block th:if="${content}">
-        <form method="post" th:action="@{/admin/users}" id="main-form">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead th:with="postFix='&pageSize='+${pageSize} +${status!=null?'&status='+status:''}+${cate!=null?'&cate='+cate:''}+${role!=null?'&role='+role:''}+${keyword!=null?'&keyword='+keyword:''}">
-                    <tr>
-                        <th><input type="checkbox" id="select_all" class="form-check-input">
-                            <span id="select_count"></span>
-                        </th>
-                        <th>#</th>
-                        <th>Email</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th><a class="d-flex text-decoration-none" role="button"
-                               th:href="@{${baseUrl}+'?sortField=points'+${sortField.equals('points')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
-                            <span>Point</span><i data-feather="align-center"></i></a></th>
-                        <th>Status</th>
-                        <th>Created Date</th>
-                        <th><a class="d-flex text-decoration-none" role="button"
-                               th:href="@{${baseUrl}+'?sortField=lastModifiedDate'+${sortField.equals('lastModifiedDate')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
-                            <span>LMD</span><i data-feather="align-center"></i></a></th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="user: ${content}">
-                        <td>
-                            <input class="form-check-input emp_checkbox" type="checkbox" name="cid"
-                                   th:value="${user.id}"/>
-
-                        </td>
-                        <td th:text="${user.id}">1</td>
-                        <td th:text="${user.email}"></td>
-                        <td class="" th:text="${user.name}"></td>
-                        <td><span class="d-block" th:each="i:${#numbers.sequence(0,user.roles.size()-1)}"
-                                  th:text="${user.roles.get(i).name}"></span></td>
-                        <td class="" th:text="${user.points}"></td>
-                        <td th:text="${user.isActivated()?'Enabled':'Disabled'}">Status</td>
-                        <td class="" th:text="${#dates.format(user.createdDate,'dd-MM-yyyy HH:mm:ss')}"></td>
-                        <td class="" th:text="${#dates.format(user.lastModifiedDate,'dd-MM-yyyy HH:mm:ss')}"></td>
-                        <td class="text-end">
-                            <div class="btn-group-vertical">
-                                <a class="btn btn-warning btn-sm" th:href="@{/admin/users/edit/{id}(id=${user.id})}">
-                                    <i data-feather="edit-3"></i>
-                                    <span class="d-none d-md-inline">Sửa</span>
-                                </a>
-                                <a class="btn btn-primary btn-sm"
-                                   th:href="@{/admin/users/resetpassword/{id}(id=${user.id})}"
-                                   th:data-v-reset="${user.email}">
-                                    <i data-feather="refresh-ccw"></i>
-                                    <span class="d-none d-md-inline">Password</span>
-                                </a>
-                                <a class="btn btn-danger btn-sm" th:href="@{/admin/users/delete/{id}(id=${user.id})}"
-                                   th:data-v-delete="${user.email}">
-                                    <i data-feather="trash"></i>
-                                    <span class="d-none d-md-inline">Xóa</span></a>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+      <span th:if="${keyword!=null && !keyword.isBlank()}" class="flex-fill fs-3">Found [[${totalUsers}]] results for: '[[${keyword}]]'</span>
+      <div class="d-flex">
+        <form class=" me-3">
+          <input type="hidden" name="sortField" th:value="${sortField}">
+          <input type="hidden" name="sortDir" th:value="${sortDir}">
+          <input type="hidden" name="page" th:value="${currentPage}">
+          <input type="hidden" name="pageSize" th:value="${pageSize}">
+          <input type="hidden" name="keyword" th:value="${keyword}">
+          <select name="role" class="form-select" aria-label="Default select"
+                  onchange="this.form.submit()">
+            <option value="" selected>Filter by role</option>
+            <option th:each="rolee: ${roles}" th:value="${rolee.id}"
+                    th:selected="${rolee.id == role}"
+                    th:text="${rolee.name}"></option>
+          </select>
         </form>
-        <th:block th:replace="~{components/pagination::common_pagination(${baseUrl})}"/>
-        <div th:if="${totalPages>0}" class="d-flex mt-3 align-items-center">
-            <span class="me-2">Page size:</span>
-            <form>
-                <input type="hidden" name="sortField" th:value="${sortField}">
-                <input type="hidden" name="sortDir" th:value="${sortDir}">
-                <select name="pageSize" class="form-select" aria-label="Default select" onchange="this.form.submit()">
-                    <option th:each="i: ${#numbers.sequence(3,9,3)}" th:value="${i}" th:selected="${i == pageSize}"
-                            th:text="${i}"></option>
-                </select>
-            </form>
-        </div>
-    </th:block>
-    <div th:if="${totalUsers==0}" class="text-center text-bg-danger p-3">Oops, nothing to see here!</div>
-    <th:block th:replace="~{components/notice::common_notice}"/>
+        <a class="btn btn-primary text-nowrap" href="/admin/users/new">
+          <i data-feather="plus"></i>
+          Add new user
+        </a>
+      </div>
+    </div>
+  </h2>
+  <th:block th:if="${content}">
+    <form method="post" th:action="@{/admin/users}" id="main-form">
+      <div class="table-responsive">
+        <table class="table">
+          <thead
+              th:with="postFix='&pageSize='+${pageSize} +${status!=null?'&status='+status:''}+${cate!=null?'&cate='+cate:''}+${role!=null?'&role='+role:''}+${keyword!=null?'&keyword='+keyword:''}">
+          <tr>
+            <th><input type="checkbox" id="select_all" class="form-check-input">
+              <span id="select_count"></span>
+            </th>
+            <th>#</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th><a class="d-flex text-decoration-none" role="button"
+                   th:href="@{${baseUrl}+'?sortField=points'+${sortField.equals('points')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
+              <span>Point</span><i data-feather="align-center"></i></a></th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th><a class="d-flex text-decoration-none" role="button"
+                   th:href="@{${baseUrl}+'?sortField=lastModifiedDate'+${sortField.equals('lastModifiedDate')?'&sortDir='+reverseSortDir:'&sortDir=desc'}+${postFix}}">
+              <span>LMD</span><i data-feather="align-center"></i></a></th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="user: ${content}">
+            <td>
+              <input class="form-check-input emp_checkbox" type="checkbox" name="cid"
+                     th:value="${user.id}"/>
+
+            </td>
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.email}"></td>
+            <td class="" th:text="${user.name}"></td>
+            <td><span class="d-block" th:each="i:${#numbers.sequence(0,user.roles.size()-1)}"
+                      th:text="${user.roles.get(i).name}"></span></td>
+            <td class="" th:text="${user.points}"></td>
+            <td th:text="${user.isActivated()?'Enabled':'Disabled'}">Status</td>
+            <td class="" th:text="${#dates.format(user.createdDate,'dd-MM-yyyy HH:mm:ss')}"></td>
+            <td class=""
+                th:text="${#dates.format(user.lastModifiedDate,'dd-MM-yyyy HH:mm:ss')}"></td>
+            <td class="text-end">
+              <div class="btn-group-vertical">
+                <a class="btn btn-warning btn-sm"
+                   th:href="@{/admin/users/edit/{id}(id=${user.id})}">
+                  <i data-feather="edit-3"></i>
+                  <span class="d-none d-md-inline">Sửa</span>
+                </a>
+                <a class="btn btn-primary btn-sm"
+                   th:href="@{/admin/users/resetpassword/{id}(id=${user.id})}"
+                   th:data-v-reset="${user.email}">
+                  <i data-feather="refresh-ccw"></i>
+                  <span class="d-none d-md-inline">Password</span>
+                </a>
+                <a class="btn btn-danger btn-sm"
+                   th:href="@{/admin/users/delete/{id}(id=${user.id})}"
+                   th:data-v-delete="${user.email}">
+                  <i data-feather="trash"></i>
+                  <span class="d-none d-md-inline">Xóa</span></a>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <th:block th:replace="~{components/pagination::common_pagination(${baseUrl})}"/>
+    <div th:if="${totalPages>0}" class="d-flex mt-3 align-items-center">
+      <span class="me-2">Page size:</span>
+      <form>
+        <input type="hidden" name="sortField" th:value="${sortField}">
+        <input type="hidden" name="sortDir" th:value="${sortDir}">
+        <select name="pageSize" class="form-select" aria-label="Default select"
+                onchange="this.form.submit()">
+          <option th:each="i: ${#numbers.sequence(3,9,3)}" th:value="${i}"
+                  th:selected="${i == pageSize}"
+                  th:text="${i}"></option>
+        </select>
+      </form>
+    </div>
+  </th:block>
+  <div th:if="${totalUsers==0}" class="text-center text-bg-danger p-3">Oops, nothing to see here!
+  </div>
+  <th:block th:replace="~{components/notice::common_notice}"/>
 </div>
 
 <th:block th:replace="~{components/footer::admin_footer(~{::script})}">
-    <script>
-        /*-------------------
-        To sleect/deselect all
-        ---------------------- */
-        $("#select_all").click(function () {
-            const status = !!$(this).is(":checked");
-            $('.emp_checkbox').prop('checked', status);
-            showButtonDelete();
-        })
-        /*-------------------
-        To sleect/deselect one
-        ---------------------- */
-        $('.emp_checkbox').click(function () {
-            const status = !!$(this).is(":checked");
-            $(this).prop('checked', status);
-            showButtonDelete();
-        });
-        showButtonDelete = function () {
-            const btnDelete = $('.btn-delete');
-            const empCheckbox = $('input.emp_checkbox:checked');
-            if (empCheckbox.length > 0) {
-                if (!btnDelete.length) {
-                    const btnDelete1 = '<button type="submit" class="btn-delete btn btn-primary sticky-bottom start-50 translate-middle">Delete <span id="count-check"></span></button>';
-                    $('#main-form').append(btnDelete1);
-                }
-                $('input[type=checkbox]').on('click', btnDelete, $('#count-check').html(empCheckbox.length + ' users'), '');
-            } else {
-                btnDelete.remove();
-            }
+  <script>
+    /*-------------------
+    To sleect/deselect all
+    ---------------------- */
+    $("#select_all").click(function () {
+      const status = !!$(this).is(":checked");
+      $('.emp_checkbox').prop('checked', status);
+      showButtonDelete();
+    })
+    /*-------------------
+    To sleect/deselect one
+    ---------------------- */
+    $('.emp_checkbox').click(function () {
+      const status = !!$(this).is(":checked");
+      $(this).prop('checked', status);
+      showButtonDelete();
+    });
+    showButtonDelete = function () {
+      const btnDelete = $('.btn-delete');
+      const empCheckbox = $('input.emp_checkbox:checked');
+      if (empCheckbox.length > 0) {
+        if (!btnDelete.length) {
+          const btnDelete1 = '<button type="submit" class="btn-delete btn btn-primary sticky-bottom start-50 translate-middle">Delete <span id="count-check"></span></button>';
+          $('#main-form').append(btnDelete1);
         }
-    </script>
+        $('input[type=checkbox]').on('click', btnDelete,
+            $('#count-check').html(empCheckbox.length + ' users'), '');
+      } else {
+        btnDelete.remove();
+      }
+    }
+  </script>
 </th:block>
 </body>
 </html>

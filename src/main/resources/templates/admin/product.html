@@ -7,7 +7,9 @@
 <th:block th:replace="~{components/menu::admin_menu}"/>
 <div class="container" th:with="baseUrl=${'/admin/products'}">
   <h2>Products
-    <th:block th:replace="~{components/searchBox::common_search('Product')}"/>
+    <div class="mt-2">
+      <th:block th:replace="~{components/searchBox::common_search('Product')}"/>
+    </div>
     <div class="d-flex justify-content-end">
 
       <span th:if="${keyword!=null && !keyword.isBlank()}" class="flex-fill fs-3">Found [[${totalElements}]] results for: '[[${keyword}]]'</span>

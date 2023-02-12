@@ -1,139 +1,148 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head></head>
 <body>
 
 <th:block th:fragment="common_menu">
-    <header>
-        <nav class="navbar navbar-expand border-bottom fixed-top">
-            <div class="container">
-                <a class="navbar-brand" th:href="@{/}">
-                    <picture>
-                        <source media="(min-width: 992px)" th:attr="srcset=@{/images/logo-color.png}">
-                        <img th:src="@{/images/hieusach-website-favicon-color.png}" alt="logo" height="48"></picture>
-                </a>
-                <!-- /* Form search */-->
-                <th:block th:replace="~{components/searchBox::user_search}"/>
-                <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-primary">Login</a>
-                <th:block sec:authorize="isAuthenticated()">
-                    <div class="d-flex align-items-center">
-                        <a role="button" class="btn btn-group text-info" href="javascript:void(0)"><i
-                                data-feather="battery" width="22" height="22"></i>
-                            <span th:text="${points}">0</span></a>
-                        <div class="dropdown">
-                            <a class="navbar-nav dropdown-toggle d-flex align-items-center" type="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                <i data-feather="user"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end ">
-                                <li><a class="dropdown-item" th:href="@{/user}">Account options</a></li>
-                                <li><a class="dropdown-item" sec:authorize="hasRole('ADMIN')"
-                                       th:href="@{/admin/dashboard}">Dashboard</a>
-                                </li>
-                                <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </th:block>
+  <header>
+    <nav class="navbar navbar-expand border-bottom">
+      <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
+          <picture>
+            <source media="(min-width: 992px)" th:attr="srcset=@{/images/logo-color.png}">
+            <img th:src="@{/images/hieusach-website-favicon-color.png}" alt="logo" height="48">
+          </picture>
+        </a>
+        <!-- /* Form search */-->
+        <th:block th:replace="~{components/searchBox::user_search}"/>
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-primary">Login</a>
+        <th:block sec:authorize="isAuthenticated()">
+          <div class="d-flex align-items-center">
+            <a role="button" class="btn btn-group text-info points-view"
+               href="javascript:void(0)"><i
+                data-feather="battery" width="22" height="22"></i>
+              <span th:text="${points}">0</span></a>
+            <div class="dropdown">
+              <a class="navbar-nav dropdown-toggle d-flex align-items-center" type="button"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                <i data-feather="user"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end ">
+                <li><a class="dropdown-item" th:href="@{/user}">Account options</a></li>
+                <li><a class="dropdown-item" sec:authorize="hasRole('ADMIN')"
+                       th:href="@{/admin/dashboard}">Dashboard</a>
+                </li>
+                <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+              </ul>
             </div>
-        </nav>
-        <nav class="sticky">
-            <div class="container mb-3">
-                <div class="nav-scroller  bg-primary-subtle rounded">
-                    <ul class="nav nav-pills flex-nowrap text-nowrap justify-content-md-center ">
-                        <li th:each="category: ${categories}" class="nav-item">
-                            <a th:href="@{'/category?cate='+${category.id}}" th:text="${category.title}"
-                               th:classappend="${cate==category.id?'active':''}" class="nav-link"></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+          </div>
+        </th:block>
+      </div>
+    </nav>
+    <nav class="my-3">
+      <div class="container">
+        <div class="nav-scroller  bg-orange rounded">
+          <ul class="nav nav-pills flex-nowrap text-nowrap justify-content-md-center ">
+            <li th:each="category: ${categories}" class="nav-item">
+              <a th:href="@{'/category?cate='+${category.id}}"
+                 th:classappend="${cate==category.id?'active':''}"
+                 class="nav-link p-3 text-gray">
+                <h2
+                    class="fs-5">
+                  [[${category.title}]]</h2></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
 </th:block>
 
 <th:block th:fragment="admin_menu">
-    <nav class="navbar navbar-expand-lg fixed-top border-bottom" aria-label="Offcanvas navbar large">
-        <div class="container-fluid">
-            <a class="navbar-brand" th:href="@{/admin/dashboard}">
-                <picture>
-                    <source media="(min-width: 992px)" th:attr="srcset=@{/images/logo-color.png}">
-                    <img th:src="@{/images/hieusach-website-favicon-color.png}" alt="logo" height="48"></picture>
-            </a>
-            <div class="d-flex">
-                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar2"
-                     aria-labelledby="offcanvasNavbar2Label">
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Offcanvas</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body">
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/admin/dashboard}">
-                                    <i data-feather="activity"></i>
-                                    Dashboard</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                                   aria-expanded="false">
-                                    <i data-feather="file-text"></i>
-                                    Reports</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" th:href="@{/admin/recharges}">Recharges</a></li>
-                                    <li><a class="dropdown-item" th:href="@{/admin/purchases}">Purchases</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/admin/categories}">
-                                    <i data-feather="trello"></i>
-                                    Categories
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link" th:href="@{/admin/products}">
-                                    <i data-feather="book"></i>
-                                    Products
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link" th:href="@{/admin/users}">
-                                    <i data-feather="users"></i>
-                                    Users
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <ul class="nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            <i data-feather="bell"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end ">
-                            <li><a class="dropdown-item" th:href="@{#}">Empty</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" role="button"
-                                                     data-bs-toggle="dropdown" aria-expanded="false">
-                        <i data-feather="user"></i>
-                    </a>
-                        <ul class="dropdown-menu dropdown-menu-end ">
-                            <li><a class="dropdown-item" th:href="@{/user}">Account options</a></li>
-                            <li><a class="dropdown-item" th:href="@{/}">Go home page</a>
-                            </li>
-                            <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
-                        </ul>
-                    </li>
+  <nav class="navbar navbar-expand-lg border-bottom mb-3" aria-label="Offcanvas navbar large">
+    <div class="container-fluid">
+      <a class="navbar-brand" th:href="@{/admin/dashboard}">
+        <picture>
+          <source media="(min-width: 992px)" th:attr="srcset=@{/images/logo-color.png}">
+          <img th:src="@{/images/hieusach-website-favicon-color.png}" alt="logo" height="48">
+        </picture>
+      </a>
+      <div class="d-flex">
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar2"
+             aria-labelledby="offcanvasNavbar2Label">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Offcanvas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li class="nav-item">
+                <a class="nav-link" th:href="@{/admin/dashboard}">
+                  <i data-feather="activity"></i>
+                  Dashboard</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                  <i data-feather="file-text"></i>
+                  Reports</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" th:href="@{/admin/recharges}">Recharges</a></li>
+                  <li><a class="dropdown-item" th:href="@{/admin/purchases}">Purchases</a></li>
                 </ul>
-                <button class="navbar-toggler ms-2" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" th:href="@{/admin/categories}">
+                  <i data-feather="trello"></i>
+                  Categories
+                </a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link" th:href="@{/admin/products}">
+                  <i data-feather="book"></i>
+                  Products
+                </a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link" th:href="@{/admin/users}">
+                  <i data-feather="users"></i>
+                  Users
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-    </nav>
+        <ul class="nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown"
+               aria-expanded="false">
+              <i data-feather="bell"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end ">
+              <li><a class="dropdown-item" th:href="@{#}">Empty</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" role="button"
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+            <i data-feather="user"></i>
+          </a>
+            <ul class="dropdown-menu dropdown-menu-end ">
+              <li><a class="dropdown-item" th:href="@{/user}">Account options</a></li>
+              <li><a class="dropdown-item" th:href="@{/}">Go home page</a>
+              </li>
+              <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+        <button class="navbar-toggler ms-2" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
 </th:block>
 </body>
 </html>

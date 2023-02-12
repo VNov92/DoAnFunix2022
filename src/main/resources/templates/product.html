@@ -10,10 +10,10 @@
   <div class="container">
     <div class="d-flex flex-column flex-lg-row">
       <aside class="order-lg-first aside">
-        <h4 class="aside-header">NEW DOCUMENTS</h4>
+        <h4 class="aside-header text-pink">NEW DOCUMENTS</h4>
         <div class="aside-content">
           <ul>
-            <li th:each="item: ${contentLeft}"><a th:href="@{/product/{id}(id=${item.id})}">[[${item.title}]]</a>
+            <li th:each="item: ${top5}"><a th:href="@{/product/{id}(id=${item.id})}">[[${item.title}]]</a>
             </li>
           </ul>
         </div>
@@ -60,10 +60,10 @@
         <p th:utext="${product.fullDetail}">Full detail</p>
       </article>
       <aside class="aside">
-        <h4 class="aside-header">TOP DOWNLOAD</h4>
+        <h4 class="aside-header text-pink">TOP DOWNLOAD</h4>
         <div class="aside-content">
           <ul>
-            <li th:each="item: ${contentRight}"><a th:href="@{/product/{id}(id=${item.productId})}">[[${item.productTitle}]]</a>
+            <li th:each="item: ${topdownload}"><a th:href="@{/product/{id}(id=${item.id})}">[[${item.title}]]</a>
             </li>
           </ul>
         </div>

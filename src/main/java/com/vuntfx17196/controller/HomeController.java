@@ -3,6 +3,7 @@ package com.vuntfx17196.controller;
 import com.vuntfx17196.global.BadRequestAlertException;
 import com.vuntfx17196.model.Category;
 import com.vuntfx17196.model.Product;
+import com.vuntfx17196.model.ProductsView;
 import com.vuntfx17196.model.User;
 import com.vuntfx17196.repository.ProductsViewRepository;
 import com.vuntfx17196.security.SecurityUtils;
@@ -52,6 +53,17 @@ public class HomeController {
       }
     }
     return points;
+  }
+
+  // Product view
+  @ModelAttribute("top5")
+  public List<Product> top5ViewList() {
+    return productService.getTop5ProductsOrderByLMD();
+  }
+
+  @ModelAttribute("topdownload")
+  public List<ProductsView> topDownloadViewList() {
+    return productsViewRepository.findAll();
   }
 
   @GetMapping({"", "/", "/home"})
@@ -110,9 +122,6 @@ public class HomeController {
     }
 
     model.addAttribute("product", product.get());
-    // Aside
-    model.addAttribute("contentLeft", productService.getTop5ProductsOrderByLMD());
-    model.addAttribute("contentRight", productsViewRepository.findAll());
 
     return "product";
   }

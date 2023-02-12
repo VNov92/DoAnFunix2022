@@ -16,16 +16,27 @@ public class ProductsView implements Serializable {
   private int count;
 
   private String title;
+  private String url;
+  @Column(name = "short_detail")
+  private String shortDetail;
 
-  public int getProductId() {
+  public int getId() {
     return id;
   }
 
-  public int getRanks() {
+  public int getCount() {
     return count;
   }
 
-  public String getProductTitle() {
+  public String getTitle() {
     return title;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public String getShortDetail() {
+    return shortDetail;
   }
 }
