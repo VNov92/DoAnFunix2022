@@ -31,12 +31,17 @@
             </ol>
           </nav>
           <h1 th:text="*{title}" class="fs-4 fw-normal text-primary">Product title</h1>
-          <p class="d-flex align-items-center fs-7">
-            <span>Date:</span>
-            <span th:text="${#dates.format(product.createdDate, 'dd-MM-yyyy')}"
-                  class="text-danger ms-1">01-01-2023
+          <div class="d-flex column-gap-3">
+            <p class="d-flex align-items-center fs-7">
+              <span>Date:</span>
+              <span th:text="${#dates.format(product.createdDate, 'dd-MM-yyyy')}"
+                    class="text-danger ms-1">01-01-2023
                                         </span>
-          </p>
+            </p>
+            <p class="d-flex align-items-center fs-7">
+              <span>View times: [[*{viewTimes}]]</span>
+            </p>
+          </div>
           <p th:text="${product.shortDetail}">Short detail</p>
         </header>
         <img th:src="@{'/productImages/'+${product.url}}" th:alt="${product.title}"

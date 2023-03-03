@@ -42,6 +42,7 @@ public class HomeController {
     return categoryService.getAllCategory();
   }
 
+  // Thong tin point
   @ModelAttribute("points")
   public Integer pointView() {
     Integer points = null;
@@ -55,15 +56,22 @@ public class HomeController {
     return points;
   }
 
-  // Product view
+  // Danh sach top 5 cac tai lieu moi
   @ModelAttribute("top5")
   public List<Product> top5ViewList() {
     return productService.getTop5ProductsOrderByLMD();
   }
 
+  // Danh sach top 5 tai lieu co luot tai xuong nhieu nhat
   @ModelAttribute("topdownload")
   public List<ProductsView> topDownloadViewList() {
     return productsViewRepository.findAll();
+  }
+
+  // Danh sach top 5 tai lieu co luot xem nhieu nhat
+  @ModelAttribute("topViewTimes")
+  public List<Product> top5ViewTimes() {
+    return productService.getTopViewTimes();
   }
 
   @GetMapping({"", "/", "/home"})
@@ -121,6 +129,9 @@ public class HomeController {
       throw new BadRequestAlertException("Invalid id.");
     }
 
+    // cap nhat luot truy cap cho tai lieu hien tai
+    productService.updateViewTimes(product.get());
+    
     model.addAttribute("product", product.get());
 
     return "product";

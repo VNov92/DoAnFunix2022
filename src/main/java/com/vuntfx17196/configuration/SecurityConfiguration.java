@@ -42,7 +42,7 @@ public class SecurityConfiguration {
   public SecurityFilterChain filterChain(HttpSecurity http, RememberMeServices rememberMeServices)
       throws Exception {
     http.csrf().disable().authorizeHttpRequests(authorize -> authorize
-        .requestMatchers("/admin/**").hasRole("ADMIN")
+        .requestMatchers("/admin/**", "/actuator/**").hasRole("ADMIN")
         .requestMatchers("/user/**").hasRole("USER")
         .requestMatchers(publicPages).permitAll()
         .requestMatchers(publicResources).permitAll());
