@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{components/header::admin_header(~{::title}, ~{})}">
+    <title th:text="${status}  + ' Category'"></title>
+</head>
+<body>
+<th:block th:replace="~{components/menu::admin_menu}"/>
+<div class="container">
+    <div class="justify-content-center row">
+        <div class="col-md-8"><h2 th:text="${status}  + ' Category'">Add or update category</h2></div>
+    </div>
+    <div class="justify-content-center row">
+        <div class="col-md-8">
+            <form th:action="@{/admin/categories/add}" method="post" th:object="${category}">
+                <input type="hidden" th:value="*{id}" name="id">
+                <div class="form-floating mb-3">
+                    <input type="text" name="title" class="form-control" id="floatingInput" placeholder="Category title"
+                           th:value="*{title}" required>
+                    <label for="floatingInput">Category title</label>
+                    <span class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errorclass="d-inline-block"
+                          th:errors="*{title}"></span>
+                </div>
+                <div class="form-floating  mb-3">
+                    <textarea name="description" class="form-control" th:field="*{description}"
+                              placeholder="Description for title, can be used for seo" id="floatingTextarea"
+                              aria-describedby="textareaHelpBlock" style="height:100px" required></textarea>
+                    <label for="floatingTextarea">Description</label>
+                    <span class="invalid-feedback" th:if="${#fields.hasErrors('description')}"
+                          th:errorclass="d-inline-block" th:errors="*{description}"></span>
+                    <div id="textareaHelpBlock" class="form-text">
+                        Description for title, can be used for seo. Should be the shortest 30 words, the longest 150
+                        words
+                    </div>
+                </div>
+                <a class="btn btn-info" href="/admin/categories">
+                    <i data-feather="arrow-left"></i>
+                    Back
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i data-feather="save"></i>
+                    Lưu
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{components/footer::admin_footer(~{})}"/>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{components/header :: common_header('Home page', ~{})}">
+  <title>Home page</title>
+</head>
+
+<body data-bs-theme="light">
+<th:block th:replace="~{components/menu::common_menu}"/>
+<main class="container">
+  <!--	Slogan		-->
+  <div class="text-center bg-light">
+    <div class="col-md-5 p-lg-5 mx-auto my-5">
+      <h1 class="display-4 fw-normal">HIEU SACH</h1>
+      <p class="lead fw-normal">Reference materials, lesson plans, e-lectures, experiential
+        initiatives,
+        creative templates and more. We are ready to bring the most creative and effective
+        materials to
+        you.</p>
+      <p class="blockquote-footer">Explore our archives and download them anytime.</p>
+      <a class="btn btn-outline-secondary" href="#">Coming soon</a>
+    </div>
+  </div>
+  <!--	Content		-->
+  <section>
+    <h2 class="fs-4  text-pink">TOP DOWNLOAD</h2>
+    <div class="mb-5">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-4">
+        <div class="col" th:each="item:${topdownload}">
+          <div class="card h-100">
+            <img th:src="@{'/productImages/'+${item.url}}" class="card-img-top"
+                 th:alt="${item.title}"/>
+            <div class="card-body bg-gray">
+              <a th:href="@{/product/{id}(id=${item.id})}"
+                 class="stretched-link text-decoration-none text-white">
+                <h3 class="card-title fs-6">[[${item.title}]]</h3></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <h2 class="fs-4  text-pink">TOP VIEW</h2>
+    <div class="mb-5">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-4">
+        <div class="col" th:each="item:${topViewTimes}">
+          <div class="card h-100">
+            <img th:src="@{'/productImages/'+${item.url}}" class="card-img-top"
+                 th:alt="${item.title}"/>
+            <div class="card-body bg-gray">
+              <a th:href="@{/product/{id}(id=${item.id})}"
+                 class="stretched-link text-decoration-none text-white">
+                <h3 class="card-title fs-6">[[${item.title}]]</h3></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <h2 class="fs-4  text-pink">NEW DOCUMENTS</h2>
+    <div class="mb-5">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-4">
+        <div class="col" th:each="item:${top5}">
+          <div class="card h-100">
+            <img th:src="@{'/productImages/'+${item.url}}" class="card-img-top"
+                 th:alt="${item.title}"/>
+            <div class="card-body bg-gray">
+              <a th:href="@{/product/{id}(id=${item.id})}"
+                 class="stretched-link text-decoration-none text-white">
+                <h3 class="card-title fs-6">[[${item.title}]]</h3></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<th:block th:replace="~{components/footer::common_footer}"/>
+</body>
+
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{components/header::admin_header(~{::title}, ~{})}">
+    <title th:text="${status}  + ' Product'"></title>
+</head>
+<body>
+<th:block th:replace="~{components/menu::admin_menu}"/>
+<div class="container">
+    <div class="justify-content-center row">
+        <h2 th:text="${status}  + ' Product'">Add or update product</h2>
+    </div>
+    <form th:action="@{/admin/products/new}" method="post" th:object="${product}" enctype="multipart/form-data">
+        <div class="justify-content-center row">
+            <div class="col-md-8">
+                <input type="hidden" th:value="*{id}" name="id"/>
+                <div class="form-floating mb-3">
+                    <input type="text" id="floatingInput" th:field="*{title}" class="form-control"
+                           placeholder="Product title"/>
+                    <label for="floatingInput">Product title</label>
+                    <span class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errorclass="d-inline-block"
+                          th:errors="*{title}"></span>
+                </div>
+                <div class="form-floating  mb-3">
+                    <textarea class="form-control" th:field="*{shortDetail}"
+                              placeholder="Description for product detail, can be used for seo" id="floatingTextarea"
+                              aria-describedby="textareaHelpBlock" style="height:11rem"></textarea>
+                    <label for="floatingTextarea">Description for product title, can be used for seo</label>
+                    <span class="invalid-feedback" th:if="${#fields.hasErrors('shortDetail')}"
+                          th:errorclass="d-inline-block" th:errors="*{shortDetail}"></span>
+                    <div id="textareaHelpBlock" class="form-text">
+                        Should be the shortest 30 words, the longest
+                        150
+                        words
+                    </div>
+                </div>
+                <div class="form-floating  mb-3">
+                    <textarea class="form-control" th:field="*{fullDetail}"
+                              placeholder="Description for product detail, can be used for seo" id="floatingTextarea1"
+                              aria-describedby="textareaHelpBlock1"></textarea>
+                    <span class="invalid-feedback" th:if="${#fields.hasErrors('fullDetail')}"
+                          th:errorclass="d-inline-block" th:errors="*{fullDetail}"></span>
+                    <div id="textareaHelpBlock1" class="form-text">
+                        Should contain many keywords for seo.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group border rounded mb-3 p-3">
+                    <h3>Select category</h3>
+                    <div class="d-flex flex-column align-items-start form-add-select">
+                        <th:block th:each="category, iStat :${categories}">
+                            <input type="radio" class="btn-check" th:field="*{categoryId}" th:value="${category.id}"
+                                   th:attr="id='option'+${iStat.index + 1}" autocomplete="off">
+                            <label class="btn btn-outline-success mt-1" th:attr="for='option'+${iStat.index + 1}"
+                                   th:text="${category.title}">Category</label>
+                        </th:block>
+                    </div>
+                    <span class="invalid-feedback" th:if="${#fields.hasErrors('categoryId')}"
+                          th:errorclass="d-inline-block" th:errors="*{categoryId}"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="floatingInput1" placeholder="Product cost"
+                           th:field="*{cost}">
+                    <label for="floatingInput1">Product cost</label>
+                    <span class="invalid-feedback" th:if="${#fields.hasErrors('cost')}" th:errorclass="d-inline-block"
+                          th:errors="*{cost}"></span>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-upload col-6">
+                        <div class="form-upload__preview"></div>
+                        <div class="form-upload__field mb-3">
+                            <label class="form-upload__title" for="upload">Select image
+                                <input class="form-upload__control js-form-upload-control" id="upload"
+                                       name="productImage" type="file" accept="image/*"/>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <img class="img-thumbnail" th:if="${product.url!= null && !product.url.isBlank()}"
+                             th:src="@{${'/productImages/' + product.url}}" alt="Product image"/>
+                        <input type="hidden" name="imgName" th:value="*{url}"/>
+                    </div>
+                </div>
+                <span class="invalid-feedback" th:if="${#fields.hasErrors('url')}" th:errorclass="d-inline-block"
+                      th:errors="*{url}"></span>
+            </div>
+        </div>
+        <a class="btn btn-info" href="/admin/products">
+            <i data-feather="arrow-left"></i>
+            Back
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i data-feather="save"></i>
+            Lưu
+        </button>
+    </form>
+</div>
+
+<th:block th:replace="~{components/footer::admin_footer(~{::script})}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.4.0/classic/ckeditor.js"></script>
+    <script>
+        $(document).ready(() => {
+            ClassicEditor
+                .create(document.querySelector('#floatingTextarea1'))
+                .catch(error => {
+                    console.error(error);
+                });
+
+            $.fn.attachmentUploader = function () {
+                const uploadControl = $(this).find(".js-form-upload-control");
+                $(uploadControl).on("change", function (e) {
+                    const preview = $(this)
+                        .closest(".form-upload")
+                        .children(".form-upload__preview");
+                    const files = e.target.files;
+
+                    function previewUpload(file) {
+                        if (/\.(jpe?g|png|gif)$/i.test(file.name)) {
+                            var reader = new FileReader();
+                            reader.addEventListener(
+                                "load",
+                                function () {
+                                    const html =
+                                        '<div class="form-upload__item">' +
+                                        '<button type="button" class="btn-clear position-absolute top-0 start-100 translate-middle px-2 bg-danger border text-white rounded-circle">&times;</button>' +
+                                        '<div class="form-upload__item-thumbnail" style="background-image: url(' +
+                                        this.result +
+                                        ')"></div>' +
+                                        '<p class="form-upload__item-name">' +
+                                        file.name +
+                                        "</p>" +
+                                        "</div>";
+                                    preview.append(html);
+                                },
+                                false
+                            );
+                            reader.readAsDataURL(file);
+                        } else {
+                            alert("Please upload image only");
+                            uploadControl.val("");
+                        }
+                    }
+
+                    [].forEach.call(files, previewUpload);
+
+                    $("body").on("click", ".btn-clear", function () {
+                        $(".form-upload__item").remove();
+                        uploadControl.val("");
+                    });
+                });
+            };
+
+            $(".form-upload").attachmentUploader();
+
+            /*$("form").submit(function (e) {
+                e.preventDefault();
+                var x = $(this).serializeArray();
+                $.each(x, function (i, field) {
+                    console.log(i, field);
+                });
+            });*/
+        });
+    </script>
+</th:block>
+</body>
+</html>

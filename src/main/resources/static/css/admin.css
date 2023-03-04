@@ -1,0 +1,108 @@
+:root {
+  --bs-primary-bg-subtle: #031633;
+  --bs-primary-text: #6ea8fe;
+  --gray-color: #ECECEC;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: overlay;
+  background: var(--gray-color);
+}
+
+/*Table*/
+table {
+  background: #f8f9fa
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 6; /* number of lines to show */
+  line-clamp: 6;
+  -webkit-box-orient: vertical;
+}
+
+.truncate.max__width {
+  max-width: 350px;
+  min-width: 300px;
+}
+
+.tooltip .tooltip-inner {
+  max-width: 400px;
+  max-height: 98vh;
+  overflow-y: clip;
+}
+
+.btn-group-vertical a {
+  display: flex;
+}
+
+/*Form*/
+.form-add-select {
+  max-height: 8rem;
+  overflow-y: scroll;
+}
+
+@media screen and (min-width: 992px) {
+  form[role=search].w-lg-50 {
+    width: 50%;
+  }
+}
+
+/*Dashboard*/
+.d-flex.flex-column > .rounded {
+  min-width: 330px;
+}
+
+/*Preview image*/
+.form-upload__title {
+  cursor: pointer;
+  display: inline-block;
+  padding: 10px 15px 9px;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid #ff80b1;
+  color: #ff257a;
+  font-weight: 600;
+  position: relative;
+}
+
+.form-upload__control {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.form-upload__item {
+  position: relative;
+}
+
+.form-upload__item-thumbnail {
+  padding-top: 100%;
+  background-size: auto 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+}
+
+.form-upload__item-name {
+  word-break: break-all;
+  text-align: center;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.form-upload__field {
+  display: flex;
+}
+
+/*End preview image*/
+
+/*CKEditor*/
+.ck-editor__editable {
+  min-height: 25rem;
+  max-height: 25rem;
+}

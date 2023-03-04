@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{components/header::admin_header(~{::title}, ~{})}">
+  <title>Dashboard</title>
+</head>
+<body data-bs-theme="light">
+<th:block th:replace="~{components/menu::admin_menu}"/>
+<div class="container text-center">
+  <h1 class="display-1 mb-5">Welcome <span sec:authentication="principal.name"></span></h1>
+  <hr class="border border-danger border-2 opacity-50">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
+    <div class="col mb-3">
+      <h2 class="h2 mt-2">Products</h2>
+      <table class="table border table-light">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Total products</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr></tr>
+        <tr>
+          <th scope="row"></th>
+          <td>[[${totalProducts}]]</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col mb-3">
+      <h2 class="h2 mt-2">Categories</h2>
+      <table class="table border  table-light">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Total categories</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr></tr>
+        <tr>
+          <th scope="row"></th>
+          <td>[[${totalCategories}]]</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col mb-3">
+      <h2 class="h2 mt-2">Users</h2>
+      <table class="table border table-light">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Members</th>
+          <th scope="col">Administrators</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr></tr>
+        <tr>
+          <th scope="row"></th>
+          <td>[[${totalMembers}]]</td>
+          <td>[[${totalAdmins}]]</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <h2 class="h2 mt-2">Recharge</h2>
+      <table class="table border table-light">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Total recharges</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr></tr>
+        <tr>
+          <th scope="row"></th>
+          <td>[[${totalRecharges}]] VNĐ</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<th:block th:replace="~{components/footer::admin_footer(~{})}"/>
+</body>
+</html>

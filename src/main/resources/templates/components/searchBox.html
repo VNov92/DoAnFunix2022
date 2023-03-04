@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search box</title>
+</head>
+<body>
+<th:block th:fragment="common_search(type)">
+    <form class="border overflow-hidden rounded input-group w-lg-50 me-3" role="search">
+        <input class="form-control border-light" type="search" name="keyword" th:value="${keyword}"
+               th:placeholder="${'Search for '+type}" aria-label="Search" required>
+        <button class="btn btn-light" type="submit"><i data-feather="search"></i></button>
+    </form>
+</th:block>
+<th:block th:fragment="user_search">
+    <form th:action="@{'/search'}" class="border overflow-hidden rounded input-group w-lg-50 me-3" role="search">
+        <input class="form-control border-light" type="search" name="keyword" th:value="${keyword}"
+               placeholder="Search for product" aria-label="Search" required>
+        <button class="btn btn-light" type="submit"><i data-feather="search"></i></button>
+    </form>
+</th:block>
+</body>
+</html>

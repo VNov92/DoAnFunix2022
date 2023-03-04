@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>#{email.creation.title}</title>
+</head>
+<body>
+<p th:text="#{email.activation.greeting(${user.name})}">Dear</p>
+<p th:text="#{email.activation.text1(${newPassword})}">Your HIEUSACH account has been created with password :</p>
+<p th:text="#{email.activation.text11}">Your HIEUSACH account has been created, please click on the URL below to
+    activate
+    it:</p>
+<p>
+    <a th:with="url=(@{|${baseUrl}/login|})" th:href="${url}" th:text="${url}">Login
+        link</a>
+</p>
+<p>
+    <span th:text="#{email.activation.text2}">Regards, </span>
+    <br/>
+    <em th:text="#{email.signature}">HIEUSACH.</em>
+</p>
+</body>
+</html>
