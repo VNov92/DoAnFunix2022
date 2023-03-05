@@ -54,8 +54,9 @@ public class GoogleDriveConfig {
         .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
         .setAccessType("offline")
         .build();
-    LocalServerReceiver receiver = new LocalServerReceiver.Builder().setHost("127.0.0.1")
-        .setPort(8080).build();
+    LocalServerReceiver receiver = new LocalServerReceiver.Builder()
+        .setPort(8080)
+        .build();
 
     return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
   }

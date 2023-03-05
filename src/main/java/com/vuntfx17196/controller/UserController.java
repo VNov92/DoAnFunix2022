@@ -173,13 +173,13 @@ public class UserController {
       response.setHeader("Cache-Control", "must-revalidate");
       response.setHeader("Pragma", "public");
       response.setHeader("Content-Transfer-Encoding", "binary");
-      response.setHeader("Content-disposition", "attachment; ");
+      response.setHeader("Content-disposition", "attachment;");
 
       bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
       FileCopyUtils.copy(bufferedInputStream, response.getOutputStream());
 
     } catch (Exception e) {
-
+      return null;
     } finally {
       try {
         response.getOutputStream().flush();

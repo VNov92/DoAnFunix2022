@@ -24,7 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
   boolean existsByTitle(String title);
 
-  List<Product> findTop5ByOrderByLastModifiedDate();
+  List<Product> findTop5ByOrderByLastModifiedDateDesc();
 
   List<Product> findTop5ByOrderByViewTimesDesc();
 }

@@ -34,9 +34,9 @@ public class Product implements Serializable {
   @Column(columnDefinition = "text not null")
   @NotBlank
   private String fullDetail;
-  @Column(nullable = false)
-  @NotBlank
+
   private String url;
+  private String ggId;
   private int cost;
   private long viewTimes;
   @CreatedDate
@@ -129,5 +129,13 @@ public class Product implements Serializable {
 
   public void setViewTimes(long viewTimes) {
     this.viewTimes = viewTimes;
+  }
+
+  public String getGgId() {
+    return ggId;
+  }
+
+  public void setGgId(String ggId) {
+    this.ggId = ggId;
   }
 }

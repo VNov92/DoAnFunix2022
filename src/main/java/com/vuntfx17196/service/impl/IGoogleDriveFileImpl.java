@@ -50,7 +50,7 @@ public class IGoogleDriveFileImpl implements IGoogleDriveFile {
   public void deleteFile(String id) throws Exception {
     googleFileManager.deleteFileOrFolder(id);
   }
-
+  
   @Override
   public String uploadFile(MultipartFile file, String filePath, boolean isPublic) {
     String type = "";

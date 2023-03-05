@@ -99,7 +99,8 @@
           <td class="" th:text="${product.lastModifiedDate}"></td>
           <td class="text-end">
             <div class="btn-group-vertical">
-              <a class="btn btn-info btn-sm" th:href="@{/product/{id}(id=${product.id})}">
+              <a class="btn btn-info btn-sm" th:href="@{/product/{id}(id=${product.id})}"
+                 target="_blank">
                 <i data-feather="eye"></i>
                 <span class="d-none d-md-inline">Xem</span>
               </a>

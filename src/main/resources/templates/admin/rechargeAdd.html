@@ -1,62 +1,64 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{components/header::admin_header(~{::title}, ~{})}">
-    <title>Add recharge</title>
+  <title>Add recharge</title>
 </head>
 <body>
 <th:block th:replace="~{components/menu::admin_menu}"/>
 <div class="container">
-    <div class="d-grid gap-2 col-md-9 col-lg-6 mx-auto">
-        <div class="justify-content-center row">
-            <h2>Add recharge</h2>
-        </div>
-        <form th:action="@{/admin/recharges/new}" method="post" th:object="${rechargeDTO}"
-              enctype="multipart/form-data">
-            <div class="justify-content-center row">
-                <div class="col-md-8">
-                    <input type="hidden" th:value="*{id}" name="id"/>
-                    <div class="form-floating mb-3">
-                        <input type="email" id="floatingInput" th:field="*{email}" class="form-control"
-                               placeholder="User email"/>
-                        <label for="floatingInput">User email</label>
-                        <span class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
-                              th:errorclass="d-inline-block" th:errors="*{email}"></span>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="number" id="floatingInput11" th:field="*{money}" class="form-control"
-                               placeholder="Money"/>
-                        <label for="floatingInput11">Money</label>
-                        <span class="invalid-feedback" th:if="${#fields.hasErrors('money')}"
-                              th:errorclass="d-inline-block" th:errors="*{money}"></span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group border rounded mb-3 p-3">
-                        <h3>Set activated</h3>
-                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                            <input type="radio" class="btn-check" id="btnradio1" th:field="*{status}" value="success"
-                                   autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio1">Success</label>
-
-                            <input type="radio" class="btn-check" id="btnradio2" th:field="*{status}" value="failed"
-                                   autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio2">Failed</label>
-                        </div>
-                        <span class="invalid-feedback" th:if="${#fields.hasErrors('status')}"
-                              th:errorclass="d-inline-block" th:errors="*{status}"></span>
-                    </div>
-                </div>
-            </div>
-            <a class="btn btn-info" href="/admin/recharges">
-                <i data-feather="arrow-left"></i>
-                Back
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <i data-feather="save"></i>
-                Lưu
-            </button>
-        </form>
+  <div class="d-grid gap-2 col-md-9 col-lg-6 mx-auto">
+    <div class="justify-content-center row">
+      <h2>Add recharge</h2>
     </div>
+    <form th:action="@{/admin/report/recharges/new}" method="post" th:object="${rechargeDTO}"
+          enctype="multipart/form-data">
+      <div class="justify-content-center row">
+        <div class="col-md-8">
+          <input type="hidden" th:value="*{id}" name="id"/>
+          <div class="form-floating mb-3">
+            <input type="email" id="floatingInput" th:field="*{email}" class="form-control"
+                   placeholder="User email"/>
+            <label for="floatingInput">User email</label>
+            <span class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
+                  th:errorclass="d-inline-block" th:errors="*{email}"></span>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="number" id="floatingInput11" th:field="*{money}" class="form-control"
+                   placeholder="Money"/>
+            <label for="floatingInput11">Money</label>
+            <span class="invalid-feedback" th:if="${#fields.hasErrors('money')}"
+                  th:errorclass="d-inline-block" th:errors="*{money}"></span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group border rounded mb-3 p-3">
+            <h3>Set activated</h3>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+              <input type="radio" class="btn-check" id="btnradio1" th:field="*{status}"
+                     value="success"
+                     autocomplete="off">
+              <label class="btn btn-outline-primary" for="btnradio1">Success</label>
+
+              <input type="radio" class="btn-check" id="btnradio2" th:field="*{status}"
+                     value="failed"
+                     autocomplete="off">
+              <label class="btn btn-outline-primary" for="btnradio2">Failed</label>
+            </div>
+            <span class="invalid-feedback" th:if="${#fields.hasErrors('status')}"
+                  th:errorclass="d-inline-block" th:errors="*{status}"></span>
+          </div>
+        </div>
+      </div>
+      <a class="btn btn-info" href="/admin/recharges">
+        <i data-feather="arrow-left"></i>
+        Back
+      </a>
+      <button type="submit" class="btn btn-primary">
+        <i data-feather="save"></i>
+        Lưu
+      </button>
+    </form>
+  </div>
 </div>
 
 <th:block th:replace="~{components/footer::admin_footer(~{})}"/>

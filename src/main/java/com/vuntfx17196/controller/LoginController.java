@@ -26,7 +26,7 @@ public class LoginController {
 
   private final UserService userService;
   private final MailService mailService;
-  public static final String REGEXPATTERN = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+  public static final String REGEX_PATTERN = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
 
   public LoginController(UserService userService, MailService mailService) {
     this.userService = userService;
@@ -37,9 +37,9 @@ public class LoginController {
   public String login() {
     // kiem tra trang thai dang nhap cua client
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      if (authentication instanceof AnonymousAuthenticationToken) {
-          return "login";
-      }
+    if (authentication instanceof AnonymousAuthenticationToken) {
+      return "login";
+    }
 
     return "redirect:/";
   }
@@ -83,7 +83,7 @@ public class LoginController {
 
   @PostMapping("/forgotpassword")
   public String requestPasswordReset(@RequestParam String email, Model model) {
-    boolean isValidEmail = patternMatches(email, REGEXPATTERN);
+    boolean isValidEmail = patternMatches(email, REGEX_PATTERN);
     String errorModel = "";
     String message = "";
     if (!isValidEmail) {

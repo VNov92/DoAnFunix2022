@@ -1,72 +1,76 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{components/header::admin_header(~{::title}, ~{})}">
-    <title>Recharge Reports</title>
+  <title>Recharge Reports</title>
 </head>
 <body>
 <th:block th:replace="~{components/menu::admin_menu}"/>
-<div class="container" th:with="baseUrl=${'/admin/recharges'}">
-    <h2>Recharge Reports
-        <div class="d-flex justify-content-end">
-            <form class=" me-3">
-                <input type="hidden" name="sortField" th:value="${sortField}">
-                <input type="hidden" name="sortDir" th:value="${sortDir}">
-                <input type="hidden" name="pageSize" th:value="${pageSize}">
-                <select name="status" class="form-select" aria-label="Default select" onchange="this.form.submit()">
-                    <option value="" selected>Select status</option>
-                    <option value="success" th:selected="${status.equals('success')}">Success</option>
-                    <option value="failed" th:selected="${status.equals('failed')}">Failed</option>
-                </select>
-            </form>
-            <a class="btn btn-primary text-nowrap" href="/admin/recharges/new">
-                <i data-feather="plus"></i>
-                Add a recharge
-            </a>
-        </div>
-    </h2>
-    <th:block th:if="${content}">
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>User</th>
-                    <th><a class="d-flex text-decoration-none" role="button"
-                           th:href="@{${baseUrl}(sortField='money',sortDir=${sortField!=null&&sortField.equals('money')?reverseSortDir:sortDir},pageSize=${pageSize})}"><span>Money</span><i
-                            data-feather="align-center"></i></a></th>
-                    <th>Status</th>
-                    <th><a class="d-flex text-decoration-none" role="button"
-                           th:href="@{${baseUrl}(sortField='createdDate',sortDir=${sortField!=null&&sortField.equals('createdDate')?reverseSortDir:sortDir},pageSize=${pageSize})}"><span>Created Date</span><i
-                            data-feather="align-center"></i></a></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item: ${content}">
-                    <td th:text="${item.id}">1</td>
-                    <td th:text="${item.user.email}"></td>
-                    <td><span>[[${#numbers.formatInteger(item.money,3,'POINT')}]] VND</span></td>
-                    <td th:text="${item.status}">Status</td>
-                    <td class="" th:text="${#dates.format(item.createdDate,'dd-MM-yyyy HH:mm:ss')}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <th:block th:replace="~{components/pagination::common_pagination(${baseUrl})}"/>
-        <div th:if="${totalPages>0}" class="d-flex mt-3 align-items-center">
-            <span class="me-2">Page size:</span>
-            <form>
-                <input type="hidden" name="sortField" th:value="${sortField}">
-                <input type="hidden" name="sortDir" th:value="${sortDir}">
-                <select name="pageSize" class="form-select" aria-label="Default select" onchange="this.form.submit()">
-                    <option th:each="i: ${#numbers.sequence(3,9,3)}" th:value="${i}" th:selected="${i == pageSize}"
-                            th:text="${i}"></option>
-                </select>
-            </form>
-        </div>
-    </th:block>
-    <div th:unless="${content}" class="text-center text-bg-danger p-3">Oops, nothing to see here!</div>
-    <th:block th:replace="~{components/notice::common_notice}"/>
+<div class="container" th:with="baseUrl=${'/admin/report/recharges'}">
+  <h2>Recharge Reports
+    <div class="d-flex justify-content-end">
+      <form class=" me-3">
+        <input type="hidden" name="sortField" th:value="${sortField}">
+        <input type="hidden" name="sortDir" th:value="${sortDir}">
+        <input type="hidden" name="pageSize" th:value="${pageSize}">
+        <select name="status" class="form-select" aria-label="Default select"
+                onchange="this.form.submit()">
+          <option value="" selected>Select status</option>
+          <option value="success" th:selected="${status.equals('success')}">Success</option>
+          <option value="failed" th:selected="${status.equals('failed')}">Failed</option>
+        </select>
+      </form>
+      <a class="btn btn-primary text-nowrap" href="/admin/report/recharges/new">
+        <i data-feather="plus"></i>
+        Add a recharge
+      </a>
+    </div>
+  </h2>
+  <th:block th:if="${content}">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th><a class="d-flex text-decoration-none" role="button"
+                 th:href="@{${baseUrl}(sortField='money',sortDir=${sortField!=null&&sortField.equals('money')?reverseSortDir:sortDir},pageSize=${pageSize})}"><span>Money</span><i
+              data-feather="align-center"></i></a></th>
+          <th>Status</th>
+          <th><a class="d-flex text-decoration-none" role="button"
+                 th:href="@{${baseUrl}(sortField='createdDate',sortDir=${sortField!=null&&sortField.equals('createdDate')?reverseSortDir:sortDir},pageSize=${pageSize})}"><span>Created Date</span><i
+              data-feather="align-center"></i></a></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item: ${content}">
+          <td th:text="${item.id}">1</td>
+          <td th:text="${item.user.email}"></td>
+          <td><span>[[${#numbers.formatInteger(item.money,3,'POINT')}]] VND</span></td>
+          <td th:text="${item.status}">Status</td>
+          <td class="" th:text="${#dates.format(item.createdDate,'dd-MM-yyyy HH:mm:ss')}"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <th:block th:replace="~{components/pagination::common_pagination(${baseUrl})}"/>
+    <div th:if="${totalPages>0}" class="d-flex mt-3 align-items-center">
+      <span class="me-2">Page size:</span>
+      <form>
+        <input type="hidden" name="sortField" th:value="${sortField}">
+        <input type="hidden" name="sortDir" th:value="${sortDir}">
+        <select name="pageSize" class="form-select" aria-label="Default select"
+                onchange="this.form.submit()">
+          <option th:each="i: ${#numbers.sequence(3,9,3)}" th:value="${i}"
+                  th:selected="${i == pageSize}"
+                  th:text="${i}"></option>
+        </select>
+      </form>
+    </div>
+  </th:block>
+  <div th:unless="${content}" class="text-center text-bg-danger p-3">Oops, nothing to see here!
+  </div>
+  <th:block th:replace="~{components/notice::common_notice}"/>
 </div>
 
 <th:block th:replace="~{components/footer::admin_footer(~{})}"/>

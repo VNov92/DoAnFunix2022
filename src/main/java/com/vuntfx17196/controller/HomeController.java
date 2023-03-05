@@ -1,5 +1,7 @@
 package com.vuntfx17196.controller;
 
+import static com.vuntfx17196.controller.AdminController.PAGE_SIZE_DEFAULT;
+
 import com.vuntfx17196.global.BadRequestAlertException;
 import com.vuntfx17196.model.Category;
 import com.vuntfx17196.model.Product;
@@ -27,7 +29,6 @@ public class HomeController {
   private final ProductService productService;
   private final UserService userService;
   private final ProductsViewRepository productsViewRepository;
-  private static final String PAGE_SIZE_DEFAULT = "3";
 
   public HomeController(CategoryService categoryService, UserService userService,
       ProductService productService, ProductsViewRepository productsViewRepository) {
@@ -131,7 +132,7 @@ public class HomeController {
 
     // cap nhat luot truy cap cho tai lieu hien tai
     productService.updateViewTimes(product.get());
-    
+
     model.addAttribute("product", product.get());
 
     return "product";

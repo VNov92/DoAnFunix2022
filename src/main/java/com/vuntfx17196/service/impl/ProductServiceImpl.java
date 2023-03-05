@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   @Transactional(readOnly = true)
   public List<Product> getTop5ProductsOrderByLMD() {
-    return productRepository.findTop5ByOrderByLastModifiedDate();
+    return productRepository.findTop5ByOrderByLastModifiedDateDesc();
   }
 
   @Override
@@ -157,6 +157,7 @@ public class ProductServiceImpl implements ProductService {
     product.setShortDetail(productDTO.getShortDetail());
     product.setFullDetail(productDTO.getFullDetail());
     product.setUrl(productDTO.getUrl());
+    product.setGgId(productDTO.getGgId());
 
     productRepository.save(product);
   } // add or update dua vao pri-key

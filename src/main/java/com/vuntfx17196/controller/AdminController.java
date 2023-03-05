@@ -3,24 +3,19 @@ package com.vuntfx17196.controller;
 import static com.vuntfx17196.security.AuthoritiesConstants.ADMIN;
 
 import com.vuntfx17196.dto.ProductDTO;
-import com.vuntfx17196.dto.RechargeDTO;
 import com.vuntfx17196.dto.UserDTO;
 import com.vuntfx17196.dto.UserUpdateDTO;
 import com.vuntfx17196.global.AccountResourceException;
 import com.vuntfx17196.global.BadRequestAlertException;
 import com.vuntfx17196.model.Category;
 import com.vuntfx17196.model.Product;
-import com.vuntfx17196.model.Purchase;
-import com.vuntfx17196.model.Recharge;
 import com.vuntfx17196.model.Role;
 import com.vuntfx17196.model.User;
-import com.vuntfx17196.repository.ProductsViewRepository;
 import com.vuntfx17196.repository.RoleRepository;
 import com.vuntfx17196.service.CategoryService;
+import com.vuntfx17196.service.IGoogleDriveFile;
 import com.vuntfx17196.service.MailService;
 import com.vuntfx17196.service.ProductService;
-import com.vuntfx17196.service.PurchaseService;
-import com.vuntfx17196.service.RechargeService;
 import com.vuntfx17196.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -51,32 +46,30 @@ public class AdminController {
   private final ProductService productService;
   private final UserService userService;
   private final RoleRepository roleRepository;
-  private final RechargeService rechargeService;
-  private final PurchaseService purchaseService;
   private final HttpSession session;
   private final MailService mailService;
+  private final IGoogleDriveFile iGoogleDriveFile;
   String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/productImages";
-  private static final String SORT_FIELD_DEFAULT = "lastModifiedDate";
-  private static final String SORT_DIR_DEFAULT = "desc";
-  private static final int PAGE_NUM_DEFAULT = 1;
-  private static final String PAGE_SIZE_DEFAULT = "3";
-  private static final String STATUS = "status";
-  private static final String SUCCESS = "success";
+  static final String SORT_FIELD_DEFAULT = "lastModifiedDate";
+  static final String SORT_DIR_DEFAULT = "desc";
+  static final int PAGE_NUM_DEFAULT = 1;
+  static final String PAGE_SIZE_DEFAULT = "3";
+  static final String STATUS = "status";
+  static final String SUCCESS = "success";
+  static final String IMG_ID = "oldImageNameForDelete";
   private String keywordDefault = "";
   private Integer idDefault = 0;
 
   public AdminController(CategoryService categoryService, ProductService productService,
-      UserService userService, RoleRepository roleRepository, RechargeService rechargeService,
-      PurchaseService purchaseService, HttpSession session, MailService mailService,
-      ProductsViewRepository productsViewRepository) {
+      UserService userService, RoleRepository roleRepository, HttpSession session,
+      MailService mailService, IGoogleDriveFile iGoogleDriveFile) {
     this.categoryService = categoryService;
     this.productService = productService;
     this.userService = userService;
     this.roleRepository = roleRepository;
-    this.rechargeService = rechargeService;
-    this.purchaseService = purchaseService;
     this.session = session;
     this.mailService = mailService;
+    this.iGoogleDriveFile = iGoogleDriveFile;
   }
 
   @ModelAttribute("categories")
@@ -89,62 +82,6 @@ public class AdminController {
     return roleRepository.findAll();
   }
 
-  // report
-  @GetMapping("/recharges")
-  public String rechargeView(@RequestParam(value = "page", defaultValue = "1") Integer page,
-      @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE_DEFAULT) Integer pageSize,
-      @RequestParam(value = "sortField", defaultValue = "createdDate") String sortField,
-      @RequestParam(value = "sortDir", defaultValue = SORT_DIR_DEFAULT) String sortDir,
-      @RequestParam(value = STATUS, defaultValue = "") String status, Model model) {
-    Page<Recharge> recharges = null;
-    if (StringUtils.hasText(status)) {
-      recharges = rechargeService.getAllPerPageByStatus(status, page, pageSize, sortField, sortDir);
-    } else {
-      recharges = rechargeService.getAllPerPage(page, pageSize, sortField, sortDir);
-    }
-    if (recharges.hasContent()) {
-      listModel(model, page, pageSize, sortField, sortDir, recharges);
-    }
-    model.addAttribute(STATUS, status);
-    return "admin/rechargeHistory";
-  }
-
-  @GetMapping("/recharges/new")
-  public String rechargeAdd(Model model) {
-    model.addAttribute(new RechargeDTO());
-    return "admin/rechargeAdd";
-  }
-
-  @PostMapping("/recharges/new")
-  public String rechargeAdd(@Valid @ModelAttribute RechargeDTO rechargeDTO,
-      BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-    User user = userService.getUserByEmail(rechargeDTO.getEmail());
-    if (user == null) {
-      bindingResult.rejectValue("email", null, "Email does not exists.");
-    }
-    if (bindingResult.hasErrors()) {
-      model.addAttribute(rechargeDTO);
-      return "admin/rechargeAdd";
-    }
-    // save new recharge vao csdl
-    rechargeService.create(user, rechargeDTO);
-    redirectAttributes.addFlashAttribute(SUCCESS,
-        "Created new recharge for email: " + rechargeDTO.getEmail());
-    return "redirect:/admin/recharges";
-  }
-
-  @GetMapping("/purchases")
-  public String purchaseView(@RequestParam(value = "page", defaultValue = "1") Integer page,
-      @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE_DEFAULT) Integer pageSize,
-      @RequestParam(value = "sortField", defaultValue = "createdDate") String sortField,
-      @RequestParam(value = "sortDir", defaultValue = SORT_DIR_DEFAULT) String sortDir,
-      Model model) {
-    Page<Purchase> purchases = purchaseService.getAllPerPage(page, pageSize, sortField, sortDir);
-    if (purchases.hasContent()) {
-      listModel(model, page, pageSize, sortField, sortDir, purchases);
-    }
-    return "admin/purchaseHistory";
-  }
 
   /**
    * @param model       Model
@@ -154,7 +91,7 @@ public class AdminController {
    * @param sortDir     sort direction
    * @param content     Page of object
    */
-  private void listModel(Model model, Integer currentPage, Integer pageSize, String sortField,
+  static void listModel(Model model, Integer currentPage, Integer pageSize, String sortField,
       String sortDir, Page<?> content) {
     reverseSortDir(model, currentPage, pageSize, sortField, sortDir, content);
   }
@@ -178,7 +115,6 @@ public class AdminController {
     model.addAttribute("totalAdmins", userService.countByRole("ROLE_ADMIN"));
     model.addAttribute("totalCategories", categoryService.countAllCategories());
     model.addAttribute("totalProducts", productService.countAllProducts());
-    model.addAttribute("totalRecharges", rechargeService.sumRechargeAmount());
     return "admin/dashboard";
   }
 
@@ -190,6 +126,7 @@ public class AdminController {
 
   @GetMapping("/categories/new")
   public String categoryAdd(Model model) {
+    idDefault = 0;
     model.addAttribute("category", new Category());
     model.addAttribute(STATUS, "Add");
     return "/admin/categoryAdd";
@@ -257,8 +194,7 @@ public class AdminController {
           page = PAGE_NUM_DEFAULT;
           keywordDefault = keyword;
         }
-        pageable = productService.searchAllProductByKeyword(keyword, page, pageSize, sortField,
-            sortDir);
+        pageable = productService.search(keyword, page, pageSize);
       }
     } else {
       if (!StringUtils.hasText(keyword)) {
@@ -281,18 +217,20 @@ public class AdminController {
 
   @GetMapping("/products/new")
   public String productAdd(Model model) {
+    idDefault = 0;
     model.addAttribute("product", new ProductDTO());
-    model.addAttribute(STATUS, "Add");
+    session.setAttribute(STATUS, "Add");
     return "admin/productAdd";
   }
 
   @PostMapping("/products/new")
   public String productAdd(@Valid @ModelAttribute("product") ProductDTO productDTO,
       BindingResult bindingResult, @RequestParam("productImage") MultipartFile fileProductImage,
-      @RequestParam("imgName") String imgName, Model model, RedirectAttributes redirectAttributes)
+      @RequestParam("fileUploadGGDrive") MultipartFile fileUploadGGDrive,
+      Model model, RedirectAttributes redirectAttributes)
       throws IOException {
     // kiem tra id truoc khi thao tac
-    if (productDTO.getId() == null || productDTO.getId() != idDefault) {
+    if (productDTO.getId() != idDefault.intValue()) {
       throw new BadRequestAlertException("Invalid id.");
     }
     // kiem tra tieu de neu id = 0 (new or copy)
@@ -300,32 +238,33 @@ public class AdminController {
       bindingResult.rejectValue("title", null, "Title already exists");
     }
 
-    // kiem tra image
-    if (fileProductImage.isEmpty() && imgName.isEmpty()) {
-      bindingResult.rejectValue("url", null, "Please select an image.");
-    }
-
     // Lay Path cua image
     String imgUUID = "";
 
     if (!fileProductImage.isEmpty()) {
       imgUUID = fileProductImage.getOriginalFilename();
-    } else if (!imgName.isBlank()) {
-      imgUUID = imgName;
+    } else if (session.getAttribute(IMG_ID) != null) {
+      imgUUID = session.getAttribute(IMG_ID).toString();
     }
     productDTO.setUrl(imgUUID);
+
     if (bindingResult.hasErrors()) {
       model.addAttribute("product", productDTO);
-      model.addAttribute(STATUS, "Add");
       return "admin/productAdd";
+    }
+    // Neu co nhap file, upload len Google Drive, tra ve ten file de luu vao CSDL
+    if (!fileUploadGGDrive.isEmpty()) {
+      String filePath = categoryService.getCategoryById(productDTO.getCategoryId()).getTitle();
+      productDTO.setGgId(iGoogleDriveFile.uploadFile(fileUploadGGDrive, filePath, true));
     }
 
     productService.updateProduct(productDTO);
-    if (session.getAttribute("oldImageNameForDelete") != null && !fileProductImage.isEmpty()) {
+    if (session.getAttribute(IMG_ID) != null && !fileProductImage.isEmpty()) {
       productService.removeImages(uploadDir,
-          session.getAttribute("oldImageNameForDelete").toString());
+          session.getAttribute(IMG_ID).toString());
     }
-    session.removeAttribute("oldImageNameForDelete");
+    session.removeAttribute(IMG_ID);
+    session.removeAttribute(STATUS);
     if (!fileProductImage.isEmpty()) {
       productService.addImages(uploadDir, imgUUID, fileProductImage);
     }
@@ -344,8 +283,8 @@ public class AdminController {
     idDefault = product.get().getId();
 
     model.addAttribute("product", product.get());
-    model.addAttribute(STATUS, "Edit");
-    session.setAttribute("oldImageNameForDelete", product.get().getUrl());
+    session.setAttribute(STATUS, "Edit");
+    session.setAttribute(IMG_ID, product.get().getUrl());
     return "admin/productAdd";
   }
 

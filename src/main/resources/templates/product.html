@@ -54,7 +54,7 @@
             <i data-feather="download"></i>
             Download
           </a>
-          <a sec:authorize="isAuthenticated()" th:href="@{'/user/download/'+*{id}}"
+          <a sec:authorize="isAuthenticated()" th:href="@{'/user/download/'+*{id}}" target="_blank"
              class="btn btn-outline-danger py-0 d-flex align-items-center  btn--download"
              data-v-required="download">
             <i data-feather="download"></i>

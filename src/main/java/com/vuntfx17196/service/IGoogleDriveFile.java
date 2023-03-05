@@ -13,6 +13,12 @@ public interface IGoogleDriveFile {
 
   void deleteFile(String id) throws Exception;
 
+  /**
+   * @param file     tệp được chọn để upload lên GG Drive
+   * @param filePath thư mục gốc
+   * @param isPublic trạng thái share hoặc private
+   * @return id của tệp
+   */
   String uploadFile(MultipartFile file, String filePath, boolean isPublic);
 
   void downloadFile(String id, OutputStream outputStream)
