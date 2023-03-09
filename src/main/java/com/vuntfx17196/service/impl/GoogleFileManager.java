@@ -24,6 +24,12 @@ public class GoogleFileManager {
     this.googleDriveConfig = googleDriveConfig;
   }
 
+  // tim kiem 1 file cu the
+  public File search(String id) throws IOException, GeneralSecurityException {
+    return googleDriveConfig.getInstance().files().get(id)
+        .setFields("id, name, size, thumbnailLink, shared").execute();
+  }
+
   // hien thi tat ca cac file
   public List<File> listFiles() throws IOException, GeneralSecurityException {
     // Print the names and IDs for up to 10 files.

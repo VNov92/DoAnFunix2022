@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -274,13 +275,22 @@ public class AdminController {
   }
 
   @GetMapping("/products/edit/{id}")
-  public String productEdit(@PathVariable int id, Model model) {
+  public String productEdit(@PathVariable int id, Model model)
+      throws GeneralSecurityException, IOException {
     Optional<ProductDTO> product = productService.getProductById(id);
     if (product.isEmpty()) {
       throw new BadRequestAlertException("Invalid id.");
     }
 
     idDefault = product.get().getId();
+    String ggId = product.get().getGgId();
+    if (ggId != null && !ggId.isBlank()) {
+      model.addAttribute("fileGGDrive",
+          iGoogleDriveFile.getFile(ggId).getThumbnailLink());
+      System.out.println(iGoogleDriveFile.getFile(ggId).getThumbnailLink());
+    } else {
+      System.out.println("Google Drive ID is null");
+    }
 
     model.addAttribute("product", product.get());
     session.setAttribute(STATUS, "Edit");

@@ -9,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IGoogleDriveFile {
 
+  GoogleDriveFileDTO getFile(String id) throws IOException, GeneralSecurityException;
+
   List<GoogleDriveFileDTO> getAllFile() throws IOException, GeneralSecurityException;
 
   void deleteFile(String id) throws Exception;

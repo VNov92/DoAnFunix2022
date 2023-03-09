@@ -22,6 +22,20 @@ public class IGoogleDriveFileImpl implements IGoogleDriveFile {
   }
 
   @Override
+  public GoogleDriveFileDTO getFile(String id) throws IOException, GeneralSecurityException {
+    GoogleDriveFileDTO responseFile = null;
+    File file = googleFileManager.search(id);
+    if (file != null) {
+      responseFile = new GoogleDriveFileDTO();
+      responseFile.setId(file.getId());
+      responseFile.setLink("https://drive.google.com/file/d/" + file.getId() + "/view?usp=sharing");
+      responseFile.setName(file.getName());
+      responseFile.setThumbnailLink(file.getThumbnailLink());
+    }
+    return responseFile;
+  }
+
+  @Override
   public List<GoogleDriveFileDTO> getAllFile() throws IOException, GeneralSecurityException {
     List<GoogleDriveFileDTO> responseList = null;
     List<File> files = googleFileManager.listFiles();
@@ -50,7 +64,7 @@ public class IGoogleDriveFileImpl implements IGoogleDriveFile {
   public void deleteFile(String id) throws Exception {
     googleFileManager.deleteFileOrFolder(id);
   }
-  
+
   @Override
   public String uploadFile(MultipartFile file, String filePath, boolean isPublic) {
     String type = "";

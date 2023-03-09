@@ -40,6 +40,7 @@ public class ProductDTO implements Serializable {
     this.shortDetail = product.getShortDetail();
     this.fullDetail = product.getFullDetail();
     this.url = product.getUrl();
+    this.ggId = product.getGgId();
     this.cost = product.getCost();
     this.categoryId = product.getCategory().getId();
     this.createdDate = product.getCreatedDate();
