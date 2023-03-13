@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
 
@@ -33,18 +32,12 @@ public interface ProductService {
 
   long countAllProducts();
 
-  void removeProduct(Product product, String imageDir) throws IOException;
-
-  void removeListProductById(Integer[] listProductIdDelete, String imageDir);
+  void removeProduct(Product product) throws IOException;
 
   void updateProduct(ProductDTO product);
 
   void updateViewTimes(Product product);
 
   boolean isExistProductTitle(String title);
-
-  void addImages(String imageDir, String imageName, MultipartFile multipartFile) throws IOException;
-
-  void removeImages(String imageDir, String imageName) throws IOException;
 
 }

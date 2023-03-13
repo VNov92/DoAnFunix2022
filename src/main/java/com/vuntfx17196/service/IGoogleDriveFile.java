@@ -1,5 +1,6 @@
 package com.vuntfx17196.service;
 
+import com.google.api.services.drive.model.File;
 import com.vuntfx17196.dto.GoogleDriveFileDTO;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,9 +12,11 @@ public interface IGoogleDriveFile {
 
   GoogleDriveFileDTO getFile(String id) throws IOException, GeneralSecurityException;
 
+  File update(String fileId, MultipartFile file);
+
   List<GoogleDriveFileDTO> getAllFile() throws IOException, GeneralSecurityException;
 
-  void deleteFile(String id) throws Exception;
+  void deleteFile(String id) throws IOException, GeneralSecurityException;
 
   /**
    * @param file     tệp được chọn để upload lên GG Drive
@@ -21,7 +24,7 @@ public interface IGoogleDriveFile {
    * @param isPublic trạng thái share hoặc private
    * @return id của tệp
    */
-  String uploadFile(MultipartFile file, String filePath, boolean isPublic);
+  File uploadFile(MultipartFile file, String filePath, boolean isPublic);
 
   void downloadFile(String id, OutputStream outputStream)
       throws IOException, GeneralSecurityException;

@@ -1,15 +1,11 @@
 package com.vuntfx17196.service.impl;
 
 import com.vuntfx17196.dto.ProductDTO;
-import com.vuntfx17196.global.BadRequestAlertException;
 import com.vuntfx17196.model.Product;
 import com.vuntfx17196.repository.CategoryRepository;
 import com.vuntfx17196.repository.ProductRepository;
 import com.vuntfx17196.service.ProductService;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -18,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -116,35 +111,8 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   @Transactional(rollbackFor = {Throwable.class})
-  public void removeProduct(Product product, String imageDir) throws IOException {
+  public void removeProduct(Product product) throws IOException {
     productRepository.deleteById(product.getId());
-    removeImages(imageDir, product.getUrl());
-  }
-
-  // delete images
-  public void removeImages(String imageDir, String imageName) throws IOException {
-    Path imagePath = Paths.get(imageDir, imageName);
-    Files.deleteIfExists(imagePath);
-  }
-
-  public void addImages(String imageDir, String imageName, MultipartFile multipartFile)
-      throws IOException {
-    Path fileNameAndPath = Paths.get(imageDir, imageName);
-    // Luu image vao folder productImages
-    Files.write(fileNameAndPath, multipartFile.getBytes());
-  }
-
-  @Override
-  @Transactional(rollbackFor = {Throwable.class, BadRequestAlertException.class})
-  public void removeListProductById(Integer[] listProductIdDelete, String imageDir) {
-    List<Product> listProducts = productRepository.findAllById(List.of(listProductIdDelete));
-    listProducts.forEach(i -> {
-      try {
-        removeProduct(i, imageDir);
-      } catch (IOException e) {
-        throw new BadRequestAlertException(e.getMessage());
-      }
-    });
   }
 
   @Override
@@ -156,8 +124,8 @@ public class ProductServiceImpl implements ProductService {
     product.setCategory(categoryRepository.findById(productDTO.getCategoryId()));
     product.setShortDetail(productDTO.getShortDetail());
     product.setFullDetail(productDTO.getFullDetail());
-    product.setUrl(productDTO.getUrl());
     product.setGgId(productDTO.getGgId());
+    product.setImageThumbnail(productDTO.getImageThumbnail());
 
     productRepository.save(product);
   } // add or update dua vao pri-key

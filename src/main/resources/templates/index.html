@@ -28,7 +28,7 @@
       <div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-4">
         <div class="col" th:each="item:${topdownload}">
           <div class="card h-100">
-            <img th:src="@{'/productImages/'+${item.url}}" class="card-img-top"
+            <img th:src="@{${item.imageThumbnail}}" class="card-img-top"
                  th:alt="${item.title}"/>
             <div class="card-body bg-gray">
               <a th:href="@{/product/{id}(id=${item.id})}"
@@ -46,7 +46,7 @@
       <div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-4">
         <div class="col" th:each="item:${topViewTimes}">
           <div class="card h-100">
-            <img th:src="@{'/productImages/'+${item.url}}" class="card-img-top"
+            <img th:src="@{${item.imageThumbnail}}" class="card-img-top"
                  th:alt="${item.title}"/>
             <div class="card-body bg-gray">
               <a th:href="@{/product/{id}(id=${item.id})}"
@@ -64,7 +64,7 @@
       <div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-4">
         <div class="col" th:each="item:${top5}">
           <div class="card h-100">
-            <img th:src="@{'/productImages/'+${item.url}}" class="card-img-top"
+            <img th:src="@{${item.imageThumbnail}}" class="card-img-top"
                  th:alt="${item.title}"/>
             <div class="card-body bg-gray">
               <a th:href="@{/product/{id}(id=${item.id})}"

@@ -79,7 +79,7 @@
           <td class="" data-bs-toggle="tooltip" data-bs-placement="top"
               th:attr="data-bs-title=${product.title}">
             <span class="truncate" th:text="${product.title}"></span></td>
-          <td><img th:src="@{${'/productImages/' + product.url}}" class="img-thumbnail"
+          <td><img th:src="@{*{product.imageThumbnail}}" class="img-thumbnail"
                    alt="Product image"/>
           </td>
           <td class="" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -158,7 +158,7 @@
       showButtonDelete();
     })
     /*-------------------
-    To sleect/deselect one
+    To select/deselect one
     ---------------------- */
     $('.emp_checkbox').click(function () {
       const status = !!$(this).is(":checked");

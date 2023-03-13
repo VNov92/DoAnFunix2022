@@ -9,7 +9,7 @@ public interface IGoogleDriveFolder {
 
   List<GoogleDriveFoldersDTO> getAllFolder() throws IOException, GeneralSecurityException;
 
-  void createFolder(String folderName) throws Exception;
+  void createFolder(String folderName) throws IOException, GeneralSecurityException;
 
-  void deleteFolder(String id) throws Exception;
+  void deleteFolder(String id) throws IOException, GeneralSecurityException;
 }

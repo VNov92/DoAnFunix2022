@@ -16,7 +16,8 @@ public class ProductsView implements Serializable {
   private int count;
 
   private String title;
-  private String url;
+  @Column(name = "image_thumbnail")
+  private String imageThumbnail;
   @Column(name = "short_detail")
   private String shortDetail;
 
@@ -32,8 +33,8 @@ public class ProductsView implements Serializable {
     return title;
   }
 
-  public String getUrl() {
-    return url;
+  public String getImageThumbnail() {
+    return imageThumbnail;
   }
 
   public String getShortDetail() {

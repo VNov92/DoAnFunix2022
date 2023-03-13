@@ -44,7 +44,7 @@
           </div>
           <p th:text="${product.shortDetail}">Short detail</p>
         </header>
-        <img th:src="@{'/productImages/'+${product.url}}" th:alt="${product.title}"
+        <img th:src="@{*{imageThumbnail}}" th:alt="${product.title}"
              class="img-fluid rounded"/>
         <div class="d-flex justify-content-end align-items-center my-3">
           <p class="mb-0 me-2 text-danger">Please download to see the full document</p>

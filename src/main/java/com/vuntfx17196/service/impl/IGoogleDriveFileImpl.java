@@ -36,6 +36,11 @@ public class IGoogleDriveFileImpl implements IGoogleDriveFile {
   }
 
   @Override
+  public File update(String fileId, MultipartFile file) {
+    return googleFileManager.update(file, fileId);
+  }
+
+  @Override
   public List<GoogleDriveFileDTO> getAllFile() throws IOException, GeneralSecurityException {
     List<GoogleDriveFileDTO> responseList = null;
     List<File> files = googleFileManager.listFiles();
@@ -61,12 +66,12 @@ public class IGoogleDriveFileImpl implements IGoogleDriveFile {
   }
 
   @Override
-  public void deleteFile(String id) throws Exception {
+  public void deleteFile(String id) throws IOException, GeneralSecurityException {
     googleFileManager.deleteFileOrFolder(id);
   }
 
   @Override
-  public String uploadFile(MultipartFile file, String filePath, boolean isPublic) {
+  public File uploadFile(MultipartFile file, String filePath, boolean isPublic) {
     String type = "";
     String role = "";
     if (isPublic) {

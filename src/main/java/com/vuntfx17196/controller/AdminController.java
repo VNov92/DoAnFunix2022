@@ -2,6 +2,7 @@ package com.vuntfx17196.controller;
 
 import static com.vuntfx17196.security.AuthoritiesConstants.ADMIN;
 
+import com.google.api.services.drive.model.File;
 import com.vuntfx17196.dto.ProductDTO;
 import com.vuntfx17196.dto.UserDTO;
 import com.vuntfx17196.dto.UserUpdateDTO;
@@ -17,7 +18,6 @@ import com.vuntfx17196.service.IGoogleDriveFile;
 import com.vuntfx17196.service.MailService;
 import com.vuntfx17196.service.ProductService;
 import com.vuntfx17196.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -50,16 +50,20 @@ public class AdminController {
   private final HttpSession session;
   private final MailService mailService;
   private final IGoogleDriveFile iGoogleDriveFile;
-  String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/productImages";
   static final String SORT_FIELD_DEFAULT = "lastModifiedDate";
   static final String SORT_DIR_DEFAULT = "desc";
   static final int PAGE_NUM_DEFAULT = 1;
   static final String PAGE_SIZE_DEFAULT = "3";
   static final String STATUS = "status";
   static final String SUCCESS = "success";
-  static final String IMG_ID = "oldImageNameForDelete";
   private String keywordDefault = "";
   private Integer idDefault = 0;
+  static final String CATEGORY = "category";
+  static final String INVALID_ID = "Invalid id.";
+  static final String PRODUCT = "product";
+  private static final String REDIRECT_USERS = "redirect:/admin/users";
+  private static final String RETURN_PRODUCT = "admin/productAdd";
+  private static final String RETURN_USER = "admin/userAdd";
 
   public AdminController(CategoryService categoryService, ProductService productService,
       UserService userService, RoleRepository roleRepository, HttpSession session,
@@ -121,29 +125,29 @@ public class AdminController {
 
   // category
   @GetMapping("/categories")
-  public String categories(Model model) {
+  public String categories() {
     return "admin/category";
   }
 
   @GetMapping("/categories/new")
   public String categoryAdd(Model model) {
     idDefault = 0;
-    model.addAttribute("category", new Category());
+    model.addAttribute(CATEGORY, new Category());
     model.addAttribute(STATUS, "Add");
     return "/admin/categoryAdd";
   }
 
   @PostMapping("/categories/add")
-  public String categoryAdd(@Valid @ModelAttribute("category") Category category,
+  public String categoryAdd(@Valid @ModelAttribute(CATEGORY) Category category,
       BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
     if (bindingResult.hasErrors()) {
-      model.addAttribute("category", category);
+      model.addAttribute(CATEGORY, category);
       model.addAttribute(STATUS, "Add");
       return "admin/categoryAdd";
     }
 
     if (!Objects.equals(category.getId(), idDefault)) {
-      throw new BadRequestAlertException("Invalid id.");
+      throw new IllegalArgumentException(INVALID_ID);
     }
 
     categoryService.updateCategory(category);
@@ -156,12 +160,12 @@ public class AdminController {
     Category category = categoryService.getCategoryById(id);
 
     if (category == null) {
-      throw new BadRequestAlertException("Invalid id.");
+      throw new IllegalArgumentException(INVALID_ID);
     }
 
     idDefault = id;
 
-    model.addAttribute("category", category);
+    model.addAttribute(CATEGORY, category);
     model.addAttribute(STATUS, "Edit");
     return "admin/categoryAdd";
   }
@@ -170,7 +174,7 @@ public class AdminController {
   public String categoryDelete(@PathVariable int id, RedirectAttributes redirectAttributes) {
     Category category = categoryService.getCategoryById(id);
     if (category == null) {
-      throw new BadRequestAlertException("Invalid id.");
+      throw new BadRequestAlertException(INVALID_ID);
     }
     categoryService.deleteCategoryById(id);
     redirectAttributes.addFlashAttribute(SUCCESS, "Deleted category with id: " + id);
@@ -186,7 +190,7 @@ public class AdminController {
       @RequestParam(value = "cate", required = false) Integer categoryId,
       @RequestParam(value = "keyword", required = false) String keyword, Model model) {
 
-    Page<Product> pageable = null;
+    Page<Product> pageable;
     if (categoryId == null || categoryId < 1) {
       if (!StringUtils.hasText(keyword)) {
         pageable = productService.getAllProduct(page, pageSize, sortField, sortDir);
@@ -219,56 +223,42 @@ public class AdminController {
   @GetMapping("/products/new")
   public String productAdd(Model model) {
     idDefault = 0;
-    model.addAttribute("product", new ProductDTO());
+    model.addAttribute(PRODUCT, new ProductDTO());
     session.setAttribute(STATUS, "Add");
-    return "admin/productAdd";
+    return RETURN_PRODUCT;
   }
 
   @PostMapping("/products/new")
-  public String productAdd(@Valid @ModelAttribute("product") ProductDTO productDTO,
-      BindingResult bindingResult, @RequestParam("productImage") MultipartFile fileProductImage,
+  public String productAdd(@Valid @ModelAttribute(PRODUCT) ProductDTO productDTO,
+      BindingResult bindingResult,
       @RequestParam("fileUploadGGDrive") MultipartFile fileUploadGGDrive,
-      Model model, RedirectAttributes redirectAttributes)
-      throws IOException {
+      Model model, RedirectAttributes redirectAttributes) {
     // kiem tra id truoc khi thao tac
-    if (productDTO.getId() != idDefault.intValue()) {
-      throw new BadRequestAlertException("Invalid id.");
-    }
+    checkValidId(productDTO.getId());
     // kiem tra tieu de neu id = 0 (new or copy)
     if (productDTO.getId() == 0 && productService.isExistProductTitle(productDTO.getTitle())) {
-      bindingResult.rejectValue("title", null, "Title already exists");
+      bindingResult.rejectValue("title", "error.title", "Title already exists");
     }
-
-    // Lay Path cua image
-    String imgUUID = "";
-
-    if (!fileProductImage.isEmpty()) {
-      imgUUID = fileProductImage.getOriginalFilename();
-    } else if (session.getAttribute(IMG_ID) != null) {
-      imgUUID = session.getAttribute(IMG_ID).toString();
-    }
-    productDTO.setUrl(imgUUID);
 
     if (bindingResult.hasErrors()) {
-      model.addAttribute("product", productDTO);
-      return "admin/productAdd";
+      model.addAttribute(PRODUCT, productDTO);
+      return RETURN_PRODUCT;
     }
     // Neu co nhap file, upload len Google Drive, tra ve ten file de luu vao CSDL
     if (!fileUploadGGDrive.isEmpty()) {
-      String filePath = categoryService.getCategoryById(productDTO.getCategoryId()).getTitle();
-      productDTO.setGgId(iGoogleDriveFile.uploadFile(fileUploadGGDrive, filePath, true));
+      if (idDefault == 0) {
+        String filePath = categoryService.getCategoryById(productDTO.getCategoryId()).getTitle();
+        File fileUploaded = iGoogleDriveFile.uploadFile(fileUploadGGDrive, filePath, true);
+        productDTO.setGgId(fileUploaded.getId());
+        productDTO.setImageThumbnail(fileUploaded.getThumbnailLink());
+      } else {
+        File fileUpdated = iGoogleDriveFile.update(productDTO.getGgId(), fileUploadGGDrive);
+        productDTO.setImageThumbnail(fileUpdated.getThumbnailLink());
+      }
     }
 
     productService.updateProduct(productDTO);
-    if (session.getAttribute(IMG_ID) != null && !fileProductImage.isEmpty()) {
-      productService.removeImages(uploadDir,
-          session.getAttribute(IMG_ID).toString());
-    }
-    session.removeAttribute(IMG_ID);
     session.removeAttribute(STATUS);
-    if (!fileProductImage.isEmpty()) {
-      productService.addImages(uploadDir, imgUUID, fileProductImage);
-    }
 
     redirectAttributes.addFlashAttribute(SUCCESS, "Updated product.");
     return "redirect:/admin/products";
@@ -279,38 +269,34 @@ public class AdminController {
       throws GeneralSecurityException, IOException {
     Optional<ProductDTO> product = productService.getProductById(id);
     if (product.isEmpty()) {
-      throw new BadRequestAlertException("Invalid id.");
+      throw new IllegalArgumentException(INVALID_ID);
     }
 
     idDefault = product.get().getId();
     String ggId = product.get().getGgId();
     if (ggId != null && !ggId.isBlank()) {
       model.addAttribute("fileGGDrive",
-          iGoogleDriveFile.getFile(ggId).getThumbnailLink());
-      System.out.println(iGoogleDriveFile.getFile(ggId).getThumbnailLink());
-    } else {
-      System.out.println("Google Drive ID is null");
+          iGoogleDriveFile.getFile(ggId));
     }
 
-    model.addAttribute("product", product.get());
+    model.addAttribute(PRODUCT, product.get());
     session.setAttribute(STATUS, "Edit");
-    session.setAttribute(IMG_ID, product.get().getUrl());
-    return "admin/productAdd";
+    return RETURN_PRODUCT;
   }
 
   @GetMapping("/products/copy/{id}")
   public String productCopy(@PathVariable int id, Model model) {
     Optional<ProductDTO> optional = productService.getProductById(id);
-    ProductDTO productDTO = null;
+    ProductDTO productDTO;
     if (optional.isPresent()) {
       productDTO = optional.get();
       productDTO.setId(0);
     } else {
-      throw new BadRequestAlertException("Invalid id.");
+      throw new IllegalArgumentException(INVALID_ID);
     }
-    model.addAttribute("product", productDTO);
+    model.addAttribute(PRODUCT, productDTO);
     model.addAttribute(STATUS, "Copy");
-    return "admin/productAdd";
+    return RETURN_PRODUCT;
   }
 
   @GetMapping("/products/delete/{id}")
@@ -318,11 +304,19 @@ public class AdminController {
       throws IOException {
     Optional<Product> product = productService.getProductNoTranformById(id);
     if (product.isPresent()) {
-      productService.removeProduct(product.get(), uploadDir);
+      productService.removeProduct(product.get());
       redirectAttributes.addFlashAttribute(SUCCESS, "Deleted product with id: " + id);
       return "redirect:/admin/products";
     }
-    throw new BadRequestAlertException("Invalid id.");
+    throw new IllegalArgumentException(INVALID_ID);
+  }
+
+  private Role getRole(Integer id) {
+    Optional<Role> result = roleRepository.findById(id);
+    if (result.isEmpty()) {
+      throw new IllegalArgumentException("Invalid role.");
+    }
+    return result.get();
   }
 
   @GetMapping("/users")
@@ -332,21 +326,13 @@ public class AdminController {
       @RequestParam(value = "sortDir", defaultValue = SORT_DIR_DEFAULT) String sortDir,
       @RequestParam(value = "role", required = false) Integer role,
       @RequestParam(value = "keyword", required = false) String keyword, Model model) {
-    Page<User> pageable = null;
-    // kiem tra role
-    Optional<Role> rolePage = Optional.empty();
-    if (role != null && role > 0) {
-      rolePage = roleRepository.findById(role);
-      if (rolePage.isEmpty()) {
-        throw new BadRequestAlertException("Invalid role");
-      }
-    }
+    Page<User> pageable;
     if (!StringUtils.hasText(keyword)) {
       if (role == null || role == 0) {
         pageable = userService.getAllUsers(page, pageSize, sortField, sortDir);
       } else {
-        pageable = userService.getAllUsersByRole(rolePage.get(), page, pageSize, sortField,
-            sortDir);
+        pageable = userService.getAllUsersByRole(
+            getRole(role), page, pageSize, sortField, sortDir);
       }
     } else {
       if (!keyword.equals(keywordDefault)) {
@@ -357,7 +343,7 @@ public class AdminController {
         pageable = userService.searchAllByEmail(keyword, page, pageSize, sortField,
             sortDir);
       } else {
-        pageable = userService.searchAllByEmailAndRole(keyword, rolePage.get(), page, pageSize,
+        pageable = userService.searchAllByEmailAndRole(keyword, getRole(role), page, pageSize,
             sortField, sortDir);
       }
     }
@@ -371,7 +357,7 @@ public class AdminController {
   public String userAdd(Model model) {
     model.addAttribute("user", new UserDTO());
     model.addAttribute(STATUS, "Add");
-    return "admin/userAdd";
+    return RETURN_USER;
   }
 
   @PostMapping("/users/new")
@@ -381,93 +367,90 @@ public class AdminController {
     checkValidId(userDTO.getId());
     // kiem tra tieu de neu id = 0 (new)
     if (userService.getUserByEmail(userDTO.getEmail()) != null) {
-      bindingResult.rejectValue("email", null, "User already exists");
+      bindingResult.rejectValue("email", "error.email", "User already exists");
     }
     if (bindingResult.hasErrors()) {
       model.addAttribute("user", userDTO);
       model.addAttribute(STATUS, "Add");
-      return "admin/userAdd";
+      return RETURN_USER;
     }
     userService.createUser(userDTO);
     redirectAttributes.addFlashAttribute(SUCCESS,
         "Created user with email: " + userDTO.getEmail());
 
-    return "redirect:/admin/users";
+    return REDIRECT_USERS;
   }
 
   @PostMapping("/users/edit")
   public String userEdit(@Valid @ModelAttribute("user") UserUpdateDTO userUpdateDTO,
-      BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes,
-      HttpServletRequest request) {
+      BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
     // kiem tra id truoc khi thao tac
     checkValidId(userUpdateDTO.getId());
     Optional<User> userOptional = userService.getUserById(userUpdateDTO.getId());
     if (userOptional.isEmpty()) {
       throw new AccountResourceException("Account was not exists.");
     }
-    if (userOptional.get().getRoles().stream().map(Role::getId).toList().contains(1)) {
-      if (!userUpdateDTO.getRoleIds().contains(1)) {
-        bindingResult.rejectValue("roleIds", null, "Can't remove admin role of this user.");
-      }
+    if (userOptional.get().getRoles().stream().map(Role::getId).toList().contains(1)
+        && !userUpdateDTO.getRoleIds().contains(1)) {
+      bindingResult.rejectValue("roleIds", "error.role", "Can't remove admin role of this user.");
     }
     if (bindingResult.hasErrors()) {
       model.addAttribute("user", userUpdateDTO);
       model.addAttribute(STATUS, "Edit");
-      return "admin/userAdd";
+      return RETURN_USER;
     }
     userService.updateUser(userUpdateDTO);
     redirectAttributes.addFlashAttribute(SUCCESS,
         "Updated user with id: " + userUpdateDTO.getId());
 
-    return "redirect:/admin/users";
+    return REDIRECT_USERS;
   }
 
   @GetMapping("/users/resetpassword/{id}")
   public String resetPasswordByAdmin(@PathVariable int id, RedirectAttributes redirectAttributes) {
     Optional<User> userOptional = userService.getUserById(id);
     if (userOptional.isEmpty()) {
-      throw new BadRequestAlertException("Invalid id");
+      throw new IllegalArgumentException(INVALID_ID);
     }
     String resetPassword = userService.resetPasswordByAdmin(userOptional.get());
     mailService.sendPasswordResetByAdmin(userOptional.get(), resetPassword);
     String[] content = {"Reset password user", userOptional.get().getEmail() + "," + resetPassword};
     redirectAttributes.addFlashAttribute("warning", content);
-    return "redirect:/admin/users";
+    return REDIRECT_USERS;
   }
 
   @GetMapping("/users/edit/{id}")
   public String userEdit(@PathVariable int id, Model model) {
     Optional<UserUpdateDTO> userDTO = userService.getUserById(id).map(UserUpdateDTO::new);
     if (userDTO.isEmpty()) {
-      throw new BadRequestAlertException("Invalid id");
+      throw new IllegalArgumentException(INVALID_ID);
     }
     idDefault = id;
     model.addAttribute("user", userDTO.get());
     model.addAttribute(STATUS, "Edit");
-    return "admin/userAdd";
+    return RETURN_USER;
   }
 
   @GetMapping("/users/delete/{id}")
   public String userDelete(@PathVariable int id, RedirectAttributes redirectAttributes) {
     Optional<User> userOptional = userService.getUserById(id);
     if (userOptional.isEmpty()) {
-      throw new BadRequestAlertException("Invalid id");
+      throw new IllegalArgumentException(INVALID_ID);
     }
     boolean isAdmin = userOptional.get().getRoles().contains(roleRepository.findByName(ADMIN));
     if (isAdmin) {
       String[] content = {"Delete User", "Can't delete ADMIN user."};
       redirectAttributes.addFlashAttribute("warning", content);
-      return "redirect:/admin/users";
+    } else {
+      userService.removeUserById(userOptional.get());
+      redirectAttributes.addFlashAttribute(SUCCESS, "Deleted user with id: " + id);
     }
-
-    userService.removeUserById(userOptional.get());
-    redirectAttributes.addFlashAttribute(SUCCESS, "Deleted user with id: " + id);
-    return "redirect:/admin/users";
+    return REDIRECT_USERS;
   }
 
   private void checkValidId(Integer id) {
     if (id == null || !Objects.equals(id, idDefault)) {
-      throw new BadRequestAlertException("Invalid id.");
+      throw new IllegalArgumentException(INVALID_ID);
     }
   }
 

@@ -24,6 +24,21 @@ public class GoogleFileManager {
     this.googleDriveConfig = googleDriveConfig;
   }
 
+  // update file to new version
+  public File update(MultipartFile file, String fileId) {
+    File fileMetadata = new File();
+    fileMetadata.setName(file.getOriginalFilename());
+    try {
+      return googleDriveConfig.getInstance().files()
+          .update(fileId, fileMetadata, new InputStreamContent(
+              file.getContentType(), new ByteArrayInputStream(file.getBytes())
+          )).setFields("thumbnailLink").execute();
+    } catch (IOException | GeneralSecurityException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   // tim kiem 1 file cu the
   public File search(String id) throws IOException, GeneralSecurityException {
     return googleDriveConfig.getInstance().files().get(id)
@@ -57,7 +72,7 @@ public class GoogleFileManager {
   }
 
   // Tai tep len thu muc
-  public String uploadFile(MultipartFile file, String folderName, String type, String role) {
+  public File uploadFile(MultipartFile file, String folderName, String type, String role) {
     try {
       String folderId = getFolderId(folderName);
       if (null != file) {
@@ -71,7 +86,7 @@ public class GoogleFileManager {
                 file.getContentType(),
                 new ByteArrayInputStream(file.getBytes()))
             )
-            .setFields("id").execute();
+            .setFields("id, thumbnailLink").execute();
 
         if (!type.equals("private") && !role.equals("private")) {
           // Call Set Permission drive
@@ -79,9 +94,9 @@ public class GoogleFileManager {
               .create(uploadFile.getId(), setPermission(type, role)).execute();
         }
 
-        return uploadFile.getId();
+        return uploadFile;
       }
-    } catch (Exception e) {
+    } catch (IOException | GeneralSecurityException e) {
       e.printStackTrace();
     }
     return null;
@@ -97,7 +112,7 @@ public class GoogleFileManager {
   }
 
   // Xoa tep voi id
-  public void deleteFileOrFolder(String fileId) throws Exception {
+  public void deleteFileOrFolder(String fileId) throws IOException, GeneralSecurityException {
     googleDriveConfig.getInstance().files().delete(fileId).execute();
   }
 
@@ -110,7 +125,7 @@ public class GoogleFileManager {
   }
 
   // Lay id thu muc
-  public String getFolderId(String folderName) throws Exception {
+  public String getFolderId(String folderName) throws IOException, GeneralSecurityException {
     String parentId = null;
     String[] folderNames = folderName.split("/");
 
@@ -122,7 +137,7 @@ public class GoogleFileManager {
   }
 
   private String findOrCreateFolder(String parentId, String folderName, Drive driveInstance)
-      throws Exception {
+      throws IOException {
     String folderId = searchFolderId(parentId, folderName, driveInstance);
     // Folder already exists, so return id
     if (folderId != null) {
@@ -143,7 +158,7 @@ public class GoogleFileManager {
   }
 
   private String searchFolderId(String parentId, String folderName, Drive service)
-      throws Exception {
+      throws IOException {
     String folderId = null;
     String pageToken = null;
     FileList result = null;

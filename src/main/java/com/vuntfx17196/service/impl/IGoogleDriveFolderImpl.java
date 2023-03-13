@@ -38,13 +38,13 @@ public class IGoogleDriveFolderImpl implements IGoogleDriveFolder {
   }
 
   @Override
-  public void createFolder(String folderName) throws Exception {
+  public void createFolder(String folderName) throws GeneralSecurityException, IOException {
     String folderId = googleFileManager.getFolderId(folderName);
     System.out.println(folderId);
   }
 
   @Override
-  public void deleteFolder(String id) throws Exception {
+  public void deleteFolder(String id) throws GeneralSecurityException, IOException {
     googleFileManager.deleteFileOrFolder(id);
   }
 }

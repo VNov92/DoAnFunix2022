@@ -28,21 +28,23 @@ public class Product implements Serializable {
   @Column(nullable = false, unique = true)
   @NotBlank
   private String title;
-  @Column(columnDefinition = "text not null")
+  @Column(name = "short_detail", columnDefinition = "text not null")
   @NotBlank
   private String shortDetail;
-  @Column(columnDefinition = "text not null")
+  @Column(name = "full_detail", columnDefinition = "text not null")
   @NotBlank
   private String fullDetail;
-
-  private String url;
   private String ggId;
+  @Column(name = "image_thumbnail")
+  private String imageThumbnail;
   private int cost;
+  @Column(name = "view_times")
   private long viewTimes;
   @CreatedDate
-  @Column(updatable = false)
+  @Column(name = "create_date", updatable = false)
   private Instant createdDate = Instant.now();
   @LastModifiedDate
+  @Column(name = "last_modified_date")
   private Instant lastModifiedDate = Instant.now();
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id", referencedColumnName = "ID")
@@ -81,14 +83,6 @@ public class Product implements Serializable {
 
   public void setFullDetail(String fullDetail) {
     this.fullDetail = fullDetail;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public void setUrl(String url) {
-    this.url = url;
   }
 
   public int getCost() {
@@ -137,5 +131,14 @@ public class Product implements Serializable {
 
   public void setGgId(String ggId) {
     this.ggId = ggId;
+  }
+
+
+  public String getImageThumbnail() {
+    return imageThumbnail;
+  }
+
+  public void setImageThumbnail(String imageThumbnail) {
+    this.imageThumbnail = imageThumbnail;
   }
 }

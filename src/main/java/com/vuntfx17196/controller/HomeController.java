@@ -1,8 +1,10 @@
 package com.vuntfx17196.controller;
 
+import static com.vuntfx17196.controller.AdminController.CATEGORY;
+import static com.vuntfx17196.controller.AdminController.INVALID_ID;
 import static com.vuntfx17196.controller.AdminController.PAGE_SIZE_DEFAULT;
+import static com.vuntfx17196.controller.AdminController.PRODUCT;
 
-import com.vuntfx17196.global.BadRequestAlertException;
 import com.vuntfx17196.model.Category;
 import com.vuntfx17196.model.Product;
 import com.vuntfx17196.model.ProductsView;
@@ -76,7 +78,7 @@ public class HomeController {
   }
 
   @GetMapping({"", "/", "/home"})
-  public String home(Model model) {
+  public String home() {
     return "index";
   }
 
@@ -88,7 +90,7 @@ public class HomeController {
       @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir, Model model) {
     Category category = categoryService.getCategoryById(cate);
     if (category == null) {
-      throw new BadRequestAlertException("Invalid id.");
+      throw new IllegalArgumentException(INVALID_ID);
     }
     Page<Product> pageable = productService.getAllProductByCategoryId(page, pageSize, cate,
         sortField, sortDir);
@@ -97,7 +99,7 @@ public class HomeController {
       listModel(model, page, pageSize, sortField, sortDir, pageable);
     }
     model.addAttribute("title", category.getTitle());
-    return "category";
+    return CATEGORY;
   }
 
   private void listModel(Model model, Integer currentPage, Integer pageSize, String sortField,
@@ -118,6 +120,7 @@ public class HomeController {
     if (productPage != null && productPage.hasContent()) {
       listModel(model, page, null, "", "", productPage);
     }
+    model.addAttribute("totalProducts", productPage != null ? productPage.getTotalElements() : 0);
     model.addAttribute("keyword", keyword);
     model.addAttribute("title", title);
     return "search";
@@ -127,14 +130,14 @@ public class HomeController {
   public String product(@PathVariable int id, Model model) {
     Optional<Product> product = productService.getProductNoTranformById(id);
     if (product.isEmpty()) {
-      throw new BadRequestAlertException("Invalid id.");
+      throw new IllegalArgumentException(INVALID_ID);
     }
 
     // cap nhat luot truy cap cho tai lieu hien tai
     productService.updateViewTimes(product.get());
 
-    model.addAttribute("product", product.get());
+    model.addAttribute(PRODUCT, product.get());
 
-    return "product";
+    return PRODUCT;
   }
 }

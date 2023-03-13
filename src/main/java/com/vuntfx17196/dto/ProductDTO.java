@@ -3,17 +3,11 @@ package com.vuntfx17196.dto;
 import com.vuntfx17196.model.Product;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 
 public class ProductDTO implements Serializable {
 
-  /**
-   *
-   */
-  @Serial
-  private static final long serialVersionUID = 4131218893855361903L;
   private int id;
   @NotBlank
   private String title;
@@ -21,7 +15,7 @@ public class ProductDTO implements Serializable {
   private String shortDetail;
   @NotBlank
   private String fullDetail;
-  private String url;
+  private String imageThumbnail;
   private String ggId;
 
   @Min(value = 0)
@@ -39,8 +33,8 @@ public class ProductDTO implements Serializable {
     this.title = product.getTitle();
     this.shortDetail = product.getShortDetail();
     this.fullDetail = product.getFullDetail();
-    this.url = product.getUrl();
     this.ggId = product.getGgId();
+    this.imageThumbnail = product.getImageThumbnail();
     this.cost = product.getCost();
     this.categoryId = product.getCategory().getId();
     this.createdDate = product.getCreatedDate();
@@ -69,14 +63,6 @@ public class ProductDTO implements Serializable {
 
   public void setFullDetail(String fullDetail) {
     this.fullDetail = fullDetail;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public void setUrl(String url) {
-    this.url = url;
   }
 
   public int getCategoryId() {
@@ -117,5 +103,13 @@ public class ProductDTO implements Serializable {
 
   public void setCost(int cost) {
     this.cost = cost;
+  }
+
+  public String getImageThumbnail() {
+    return imageThumbnail;
+  }
+
+  public void setImageThumbnail(String imageThumbnail) {
+    this.imageThumbnail = imageThumbnail;
   }
 }
